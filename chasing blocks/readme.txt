@@ -1,2 +1,2 @@
-Nasz³o mnie na zrobienie œcigaj¹cych siê kwadratów po œrodkowych zajêciach. 
-Wiem, ¿e jeszcze wszystkiego nie odbugowa³em
+NaszÅ‚o mnie na zrobienie Å›cigajÄ…cych siÄ™ kwadratÃ³w po Å›rodowych zajÄ™ciach. 
+Wiem, Å¼e jeszcze wszystkiego nie odbugowaÅ‚em
