@@ -49,7 +49,7 @@ def end():
 
 
 if __name__ == '__main__':
-    print('Clock on area to spawn block, and space to start/stop')
+    print('Click on area to spawn block, and space to start/stop')
     pygame.init()
     start = False
     game_display = pygame.display.set_mode(resolution)
