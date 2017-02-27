@@ -2,6 +2,7 @@ import pygame
 from copy import deepcopy
 
 # no ten kod akurat jest baaardzo brzydki
+# i wciąż ma buga, ale to potem
 
 class Car:
     def __init__(self, rec, vel, color):
