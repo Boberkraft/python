@@ -1,2 +1,0 @@
-program prowadz¹cy wymianê informacji pomiêdzy swoimi dwoma w¹tkami.
-Jeden w¹tek trzyma w sekrecie liczbê, a drugi próbujê j¹ zgadn¹æ.
