@@ -1,2 +1,2 @@
 # python
-all of my simple python programs
+every completed python program
