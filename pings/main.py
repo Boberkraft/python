@@ -19,9 +19,6 @@ except ImportError:
         def reset_colors():
             pass
 
-
-
-
 def ex():
     if not len(sys.argv) > 1:
         input('Press ENTER to continue\n')
