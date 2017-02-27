@@ -142,21 +142,3 @@ except ValueError as er:
 check = Checker(ip, start, end, succ)
 
 ex()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
