@@ -11,7 +11,7 @@ def eprint(*args):
 def deviser(max, r, w):
     sys.stdin = r
     sys.stdout = w
-
+    # with that i can just use print() and input()
     eprint('deviser',r, w)
 
     with open('deviser.txt', 'w') as f:
@@ -49,7 +49,7 @@ def guesser(max, r, w):
     eprint('guesser',r, w)
     sys.stdin = r
     sys.stdout = w
-
+    # with that i can just use print() and input()
     with open('guesser.txt', 'w') as f:
         bottom, top = 0, max
         fuzzy = 10
