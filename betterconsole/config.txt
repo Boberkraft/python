@@ -1,0 +1,46 @@
+[APP]
+# what do you type in shell to run your program?
+command = game_of_life.exe
+
+# name of you application to make it look nice
+name = Cool game
+
+# maximum fps
+fps = 120
+
+# show fps?
+show_fps = True
+
+
+[BLOCK]
+# in pixels
+width = 10
+height = 10
+
+[COLORS]
+# Define your colors in (R,G,B) format. Don't use char '#'
+# Lowercase and upercase are the same.
+# eg.
+. = (255, 255, 255)
+- = (255, 255, 255)
+l = (0, 255, 0)
+X = (0, 0, 0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
