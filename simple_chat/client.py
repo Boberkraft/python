@@ -5,7 +5,7 @@ bgsrv = rpyc.BgServingThread(c)
 
 # function to receive messages
 def get_msg(s):
-    '''Class for interacting with server'''
+    '''function for interacting with server'''
     print(s)
 
 
