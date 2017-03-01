@@ -52,7 +52,9 @@ class SportData:
         # show it
         for sport, val in found_sports.items():
             print('%s + %s minut' % (sport, val), end='')
-            if val >= 30:
+            if val >= 60:
+                print('. TY KOZAKU!!!')
+            elif val >= 30:
                 print('. Brawo!')
             else:
                 print()
