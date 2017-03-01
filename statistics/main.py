@@ -134,7 +134,7 @@ if __name__ == "__main__":
         # print(Manager.sports)
 
         while True:
-            # biegałem 20 minut i 1h brzuszków
+            # biegałem 20 minut i przez 1.5h robiłem brzuszki
             if not using_args:
                 s = input("Co dzisiaj robiłeś?: ")
 
