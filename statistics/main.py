@@ -51,7 +51,7 @@ class SportData:
                         found_sports[exercise] = time_spend
         # show it
         for sport, val in found_sports.items():
-            print('%s + %s minut' % (sport, val), end='')
+            print('%s + %s' % (sport, val), end='')
             if val >= 60:
                 print('. TY KOZAKU!!!')
             elif val >= 30:
