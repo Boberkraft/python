@@ -35,7 +35,6 @@ class DataManager:
         time_format = ' %s ' % time_format
         try:
             found_time = SportData.pa_time.findall(time_format)[0]
-            print(found_time)
             if found_time.endswith('h'):
                 found_time = SportData.hours_to_minutes(found_time[:-1])
         except IndexError:
