@@ -6,14 +6,11 @@ from collections import defaultdict
 
 class DataManager:
 
-    # used for identifying sport
-    sports = defaultdict(list, {
-                'bieganie': [' bieg', ' sprint'],
-                'brzuszki': [' brzusz', ' brzuch', ' brzó'],
-                'pompki': [' pomp', ' odpychałem własne ciało od równi pochyłej']})
+
+
 
     # a pattern to grab numbers
-    pa_time = re.compile(r'\s([0-9\.h]+)\s')
+    pa_time = re.compile(r'\s([0-9.h]+)\s')
 
     @staticmethod
     def get_data(path):
@@ -38,9 +35,9 @@ class DataManager:
         time_format = ' %s ' % time_format
         try:
             found_time = SportData.pa_time.findall(time_format)[0]
-            if not found_time.endswith('h'):
-                found_time += 'h'
-            found_time = SportData.hours_to_minutes(found_time[:-1])
+            print(found_time)
+            if found_time.endswith('h'):
+                found_time = SportData.hours_to_minutes(found_time[:-1])
         except IndexError:
             # nothing found_time
             print("Whoops couldn't found any time in " + time_format)
@@ -78,6 +75,12 @@ class DataManager:
 
 
 class SportData(DataManager):
+
+    # used for identifying sport
+    sports = defaultdict(list, {
+                'bieganie': [' bieg', ' sprint'],
+                'brzuszki': [' brzusz', ' brzuch', ' brzó'],
+                'pompki': [' pomp', ' odpychałem własne ciało od równi pochyłej']})
 
     def __init__(self, path, sports=None):
         self.path = path
@@ -153,7 +156,6 @@ if __name__ == "__main__":
             # biegałem 20 minut i przez 1.5h robiłem brzuszki
             if not using_args:
                 s = input("Co dzisiaj robiłeś?: ")
-
             if s in 'exit q ex'.split():
                 quit()
             Manager = SportData('baza.txt')
