@@ -1,1 +1,1 @@
-{"brzuszki": 116, "bieganie": 4450, "pompki": 660}
+{"brzuszki": 116, "pompki": 660, "bieganie": 15010}

@@ -6,9 +6,6 @@ from collections import defaultdict
 
 class DataManager:
 
-
-
-
     # a pattern to grab numbers
     pa_time = re.compile(r'\s([0-9.h]+)\s')
 
@@ -44,20 +41,6 @@ class DataManager:
         return int(found_time)  # minutes
 
     @staticmethod
-    def add_pattern(new_patterns, new_pattern):
-        """Adds Patterns or Pattern to system"""
-        # TODO it needs to be grabed from file,
-        # TODO add option to send sequence as new_pattern
-        for exercise, patterns  in SportData.sports.items():
-            for pattern in patterns:
-                if new_pattern.find(pattern) != -1 or pattern.find(new_pattern)!= -1:
-                    print('Sorry but %s patters collide!' % new_pattern)
-                    print('%s => %s' % (exercise, pattern))
-                    raise Exception('Patterns collide')
-
-        SportData.sports[new_patterns].append(' ' + new_pattern)
-
-    @staticmethod
     def hours_to_minutes(hours):
         if hours.find('.') == -1:
             # time don't include minutes, minutes = 0
@@ -73,20 +56,49 @@ class DataManager:
         return int(int(hours) * 60 + minutes * 60)
 
 
+class SportTypes:
+    # used for identifying sport
+    sports_types = defaultdict(list, {
+        'bieganie': [' bieg', ' sprint'],
+        'brzuszki': [' brzusz', ' brzuch', ' brzó'],
+        'pompki': [' pomp', ' odpychałem własne ciało od równi pochyłej']})
+
+    def __init__(self, sports_types=None):
+        if sports_types:
+            print('podmiana')
+            self.sports_types = sports_types
+        print('elo')
+
+
+    def replace(self, sports):
+        self.sports_types = defaultdict(list, sports)
+
+
+    def add_sport_type(self, new_patterns, new_pattern):
+        """Adds Patterns or Pattern to system"""
+        # TODO it needs to be grabed from file,
+        # TODO add option to send sequence as new_pattern
+        for exercise, patterns in SportData.sports_types.items():
+            for pattern in patterns:
+                if new_pattern.find(pattern) != -1 or pattern.find(new_pattern) != -1:
+                    print('Sorry but %s patters collide!' % new_pattern)
+                    print('%s => %s' % (exercise, pattern))
+                    raise Exception('Patterns collide')
+
+        self.sports_types[new_patterns].append(' ' + new_pattern)
+
+    @classmethod
+    def from_file(cls, path):
+        return cls(DataManager.get_data(path))
+
+
 class SportData(DataManager):
 
-    # used for identifying sport
-    sports = defaultdict(list, {
-                'bieganie': [' bieg', ' sprint'],
-                'brzuszki': [' brzusz', ' brzuch', ' brzó'],
-                'pompki': [' pomp', ' odpychałem własne ciało od równi pochyłej']})
-
-    def __init__(self, path, sports=None):
+    def __init__(self, path, sports_types=None):
         self.path = path
         self.current_data = self.get_data(path)
         self.new_data = dict()
-        if sports:
-            self.sports = defaultdict(list, sports)
+        self.SportTypes = SportTypes(sports_types)
 
     def new_sport_data(self, user_input):
         """Adds new sports statistic with loaded one"""
@@ -103,7 +115,7 @@ class SportData(DataManager):
             one_sport = ' %s ' % one_sport
             # grab spent time
             time_spend = self.get_time(one_sport)
-            for exercise, patterns in SportData.sports.items():
+            for exercise, patterns in self.SportTypes.sports_types.items():
                 for pattern in patterns:
                     if one_sport.find(pattern) != -1:
                         found_sports[exercise] = time_spend
@@ -126,6 +138,8 @@ class SportData(DataManager):
 
     def save_data(self):
         super(SportData, self).save_data(self.path, self.current_data)
+
+
 
     @classmethod
     def from_file(cls, database_path, patterns_path):
@@ -153,13 +167,14 @@ if __name__ == "__main__":
 
         while True:
             # biegałem 20 minut i przez 1.5h robiłem brzuszki
-            if not using_args:
-                s = input("Co dzisiaj robiłeś?: ")
-            if s in 'exit q ex'.split():
-                quit()
+            # if not using_args:
+            #     s = input("Co dzisiaj robiłeś?: ")
+            # if s in 'exit q ex'.split():
+            #     quit()
+            s = 'Biegałem 10'
             Manager = SportData('baza.txt')
             Manager.new_sport_data(s)
             Manager.save_data()
-
+            quit()
             if using_args:
                 quit()
