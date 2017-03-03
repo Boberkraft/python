@@ -1,8 +1,7 @@
 import sys
 
+low, high = map(int, input().split())
 
-low, high = input().split()
-low, high = int(low), int(high)
 while True:
     avg = (high+low)//2
     print(avg)
