@@ -1,7 +1,7 @@
 # Brainvita / Peg Solitaire clone
 Everything works so have fun.
 
-Require pygame
+Requires pygame
 ```
 pip install pygame
 ```
