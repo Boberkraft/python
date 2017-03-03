@@ -4,7 +4,7 @@ require pygame
 ```
 pip install pygame
 ```
-![alt tag](http://imgur.com/a/7H2fZ)
+![game in action](http://i.imgur.com/Re04iho.gif)
 
 - [x] Cool graphics
 - [ ] Cool Sound effects
