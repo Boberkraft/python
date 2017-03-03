@@ -11,4 +11,4 @@ Proper time values:
 Proper separators
     ,
     i
-    oraz
+    
