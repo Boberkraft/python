@@ -174,8 +174,8 @@ mouse = Mouse()
 
 grid = Grid(STARTING_MAP)
 
-for y, row in enumerate(STARTING_MAP):
-    for x, is_ball in enumerate(row):
+for x, row in enumerate(STARTING_MAP):
+    for y, is_ball in enumerate(row):
         if is_ball:
             new_ball = BALL_SHADOW.get_rect()
             new_ball = new_ball.move(x * BALL_RECT.width, y * BALL_RECT.height)
