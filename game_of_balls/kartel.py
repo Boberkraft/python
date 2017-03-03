@@ -26,14 +26,14 @@ pygame.init()
 RESOLUTION = (len(STARTING_MAP[0]) * 50, len(STARTING_MAP) * 50)
 game_display = pygame.display.set_mode(RESOLUTION)
 
-BALL_SHADOW = pygame.image.load('ball_shadow.png').convert_alpha()
-NO_BALL = pygame.image.load('no_ball.png').convert_alpha()
-BALL = pygame.image.load('ball.png').convert_alpha()
+BALL_SHADOW = pygame.image.load('img/ball_shadow.png').convert_alpha()
+NO_BALL = pygame.image.load('img/no_ball.png').convert_alpha()
+BALL = pygame.image.load('img/ball.png').convert_alpha()
 BALL_RECT = BALL_SHADOW.get_rect()
 
 
-BORDER_SHADOW = pygame.image.load('border_shadow.png').convert_alpha()
-BORDER_LIGHT = pygame.image.load('border_light.png').convert_alpha()
+BORDER_SHADOW = pygame.image.load('img/border_shadow.png').convert_alpha()
+BORDER_LIGHT = pygame.image.load('img/border_light.png').convert_alpha()
 
 # oh god
 def draw_on_left(x, y):
