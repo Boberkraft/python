@@ -220,7 +220,6 @@ class Menu:
         self.map_arena.append(new_row)
         self.map_arena.append([0] * len(STARTING_MAP[0]))
 
-        print(new_button_rect)
 
 
 menu = Menu()
@@ -275,7 +274,6 @@ while True:
             quit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
-            print(x, y)
             if not is_paused:
                 ball_clicked = [ball for ball in all_balls if ball.collidepoint(x, y)]
                 empty_space_clicked = [empty_space for empty_space in all_empty_balls if empty_space.collidepoint(x, y)]
