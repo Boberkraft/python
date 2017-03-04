@@ -16,7 +16,7 @@ STARTING_MAP = [
        [0, 1, 1, 1, 1, 1, 1, 1, 0],
        [0, 0, 0, 1, 1, 1, 0, 0, 0],
        [0, 0, 0, 1, 1, 1, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0],]
+       [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
 actual_map = []
 all_balls = []
@@ -36,6 +36,11 @@ BALL_RECT = BALL_SHADOW.get_rect()
 BORDER_SHADOW = pygame.image.load('img/border_shadow.png').convert_alpha()
 BORDER_LIGHT = pygame.image.load('img/border_light.png').convert_alpha()
 
+font = pygame.font.Font(None, 25)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+
+# END OF CONSTANTS
 
 class Level(IntEnum):
     Normal, Hard, Hardcore = range(3)
@@ -99,12 +104,12 @@ class SoundManager:
 
     def play_background(self):
         pygame.mixer.music.load('music/%s.background.mp3' % self.lvl)
+        pygame.mixer.music.set_volume(0.10)
         pygame.mixer.music.play()
 
     def play_sound(self):
         effect = pygame.mixer.Sound('sound/%s.move.mp3' % self.lvl)
         effect.play()
-
 
 
 class Mouse:
@@ -174,12 +179,6 @@ class Grid:
 
         all_balls.append(pos)
 
-    # @staticmethod
-    # def make_empty_space( where):
-    #     print('making new space')
-    #     pos = pygame.Rect(where[0] * BALL_RECT.width, where[1] * BALL_RECT.width, BALL_RECT.width, BALL_RECT.height)
-    #     all_empty_balls.append(pos)
-
     @staticmethod
     def get_cords(who):
         return int(round(who.x / BALL_RECT.width)), int(round(who.y / BALL_RECT.height))
@@ -188,9 +187,6 @@ class Grid:
     def get_pos(who):
         return who[0] * BALL_RECT.width, who[1] * BALL_RECT.height
 
-font = pygame.font.Font(None, 25)
-BLACK = (0, 0, 0)
-RED = (255,0,0)
 
 class Menu:
     class Button:
@@ -221,20 +217,21 @@ class Menu:
         self.map_arena.append([0] * len(STARTING_MAP[0]))
 
 
-
-menu = Menu()
-
 class Overlay:
     def __init__(self, alpha, color):
         self.alpha = alpha
         self.color = color
+
     def draw(self):
         s = pygame.Surface(RESOLUTION)
         s.set_alpha(self.alpha)
         s.fill(self.color)
         game_display.blit(s, (0, 0))
 
+# END OF CLASSES
+# ACTUAL START
 
+menu = Menu()
 for name, member in Level.__members__.items():
     menu.add_button(member, name)
 
@@ -242,6 +239,7 @@ mouse = Mouse()
 game_level = Level.Normal
 overlay = None
 is_paused = True
+
 
 def setup():
     global grid, tries, all_balls, all_empty_balls, is_paused, overlay
@@ -263,8 +261,6 @@ def setup():
     sound_manager.play_background()
 
     overlay = Overlay(game_level * 25, RED)
-
-
 
 while True:
 
@@ -305,8 +301,6 @@ while True:
 
         for ball in all_balls:
             game_display.blit(BALL_SHADOW, ball)
-
-
 
         if mouse.ball:
             game_display.blit(BALL, mouse.ball)
