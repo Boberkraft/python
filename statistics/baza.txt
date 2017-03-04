@@ -1,1 +1,0 @@
-{"brzuszki": 116, "pompki": 660, "bieganie": 15010}
