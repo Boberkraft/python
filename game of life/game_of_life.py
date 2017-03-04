@@ -1,4 +1,6 @@
 import copy
+import time
+
 class Game_of_life():
     def __init__(self, x, y):
         self.x_size = x
@@ -9,7 +11,7 @@ class Game_of_life():
     def get_area(self):
         return self.area
 
-    def set_cells(self, x,y):
+    def set_cells(self, x, y):
         if self.area[x][y] == '#':
             self.area[x][y] = '.'
             print('dead')
@@ -59,21 +61,24 @@ class Game_of_life():
 
         self.area = self.new_area[:]
 
+
 def draw(area):
     for x in area:
         for y in x:
             print(y, end='')
         print()
 
-# def main():
-#     Game = Game_of_life(10, 30)
-#     Game.set_cells()
-#     area = Game.get_area()
-#     while 1:
-#         draw(area)
-#         Game.check_cells()
-#         time.sleep(0.1)
-#         area = Game.get_area()
-#         os.system("cls")
-#
-# main()
+
+def main():
+    Game = Game_of_life(10, 30)
+    Game.set_cells()
+    area = Game.get_area()
+    while 1:
+        draw(area)
+        Game.check_cells()
+        time.sleep(0.1)
+        area = Game.get_area()
+        os.system("cls")
+
+if __name__ == '__main_':
+    main()

@@ -7,6 +7,7 @@ from enum import IntEnum
 # now lets work on commenting this one, and refactoring map drawing (but how?)
 # TODO sound
 
+
 STARTING_MAP = [
        [0, 0, 0, 0, 0, 0, 0, 0, 0],
        [0, 0, 0, 1, 1, 1, 0, 0, 0],
@@ -18,6 +19,8 @@ STARTING_MAP = [
        [0, 0, 0, 1, 1, 1, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
+
+
 pygame.init()
 
 RESOLUTION = (len(STARTING_MAP[0]) * 50, len(STARTING_MAP) * 50)
@@ -28,11 +31,13 @@ NO_BALL = pygame.image.load('img/no_ball.png').convert_alpha()
 BALL = pygame.image.load('img/ball.png').convert_alpha()
 BALL_RECT = BALL_SHADOW.get_rect()
 
+HOME_BUTTON = pygame.image.load('img/home.png').convert_alpha()
+RETRY_BUTTON = pygame.image.load('img/retry.png').convert_alpha()
 
 BORDER_SHADOW = pygame.image.load('img/border_shadow.png').convert_alpha()
 BORDER_LIGHT = pygame.image.load('img/border_light.png').convert_alpha()
 
-font = pygame.font.Font(None, 25)
+font = pygame.font.Font('fonts/Vera-Bold.ttf', 25)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
@@ -73,7 +78,7 @@ def draw_background(map_to_render):
         for x, is_ball in enumerate(row):
             if is_ball == 0:
                 try:
-                    if map_to_render[y][x - 1] != 0:
+                    if map_to_render[y][x - 1] != 0 and x - 1 >= 0:
                         draw_on_left(x * BALL_RECT.width, y * BALL_RECT.height)
                 except IndexError: pass
                 try:
@@ -81,7 +86,7 @@ def draw_background(map_to_render):
                         draw_on_right(x * BALL_RECT.width, y * BALL_RECT.height)
                 except IndexError: pass
                 try:
-                    if map_to_render[y - 1][x] != 0:
+                    if map_to_render[y - 1][x] != 0 and y - 1 >= 0:
                         draw_on_top(x * BALL_RECT.width, y * BALL_RECT.height)
                 except IndexError: pass
                 try:
@@ -132,7 +137,7 @@ class Mouse:
 
 class Grid:
     def __init__(self, map_arena):
-        self.map_arena = map_arena
+        self.map_arena = deepcopy(map_arena)
 
     def check(self, who, where):
         x = abs(who[0] - where[0])
@@ -140,6 +145,7 @@ class Grid:
 
         if max(x, y) == 2:
             if min(x, y) == 0:
+
                 return True
         return False
         # return any([abs(x - y) == 2 or abs(x - y) == 0 for x, y in zip(who, where)])
@@ -155,9 +161,14 @@ class Grid:
 
         if self.map_arena[where[0]][where[1]] == 2:
             if self.check(who, where):
+
                 offset = ((who[0] - where[0]) // 2, (who[1] - where[1]) // 2)
                 ball_between = (where[0] + offset[0],  where[1] + offset[1])
+
+
+
                 if self.map_arena[ball_between[0]][ball_between[1]] == 1:
+
                     self.remove(ball_between)
                     self.map_arena[ball_between[0]][ball_between[1]] = 2
                     self.map_arena[who[0]][who[1]] = 2
@@ -182,17 +193,32 @@ class Grid:
 
 class Menu:
     class Button:
-        def __init__(self, name, caption, rect):
+        def __init__(self, name, caption, rect,):
             self.name = name
-            self.text = font.render(caption, True, BLACK)
-            self.text_rect = self.text.get_rect(center=rect.center)
+            self.text = None
+            self.caption = caption
+            self.text_rect = None
             self.rect = rect
+            self.text_rect = rect
+
+        def set_text(self):
+            self.text = font.render(self.caption, True, (97 * self.name,97,97))
+            self.text_rect = self.text.get_rect(center=self.rect.center)
 
     def __init__(self):
         self.all_buttons = []
-        self.num_buttons = 0
+        self.func_buttons = []
         self.map_arena = []
         self.map_arena.append([0] * len(STARTING_MAP[0]))
+
+    def add_func_button(self, name, img):
+        new_button_rect = pygame.Rect(len(self.func_buttons) * HOME_BUTTON.get_width()  * 1.5 + 10 ,
+                                      10,
+                                      HOME_BUTTON.get_width(),
+                                      HOME_BUTTON.get_height())
+        new_button = Menu.Button(name, 'you cant see this!', new_button_rect)
+        new_button.text = img
+        self.func_buttons.append(new_button)
 
     def add_button(self, name, caption):
         # render in the middle of screen
@@ -200,9 +226,10 @@ class Menu:
                                        (len(self.map_arena)) * BALL_RECT.height),  # y
                                       ((len(STARTING_MAP[0]) - 6) * BALL_RECT.width,  # width
                                        BALL_RECT.width))  # height
+        new_button = Menu.Button(name, caption, new_button_rect)
+        new_button.set_text()
+        self.all_buttons.append(new_button)
 
-        self.all_buttons.append(Menu.Button(name, caption, new_button_rect))
-        self.num_buttons += 1
 
         new_row = [0 if abs(index - len(STARTING_MAP)//2) > 1 else 1 for index, y in enumerate(STARTING_MAP)]
         self.map_arena.append(new_row)
@@ -235,10 +262,12 @@ menu = Menu()  # main menu
 for name, member in Level.__members__.items():
     # adds buttons to main menu from list of available levels of hardness
     menu.add_button(member, name)
+menu.add_func_button('home', HOME_BUTTON)
+menu.add_func_button('retry', RETRY_BUTTON)
 mouse = Mouse()   # mouse pointer that can hold one ball
 
 
-def setup():
+def setup(replay_music=True):
     # the setup that starts the game
     global grid, tries, all_balls, all_empty_balls, is_paused, overlay
     is_paused = False
@@ -249,8 +278,8 @@ def setup():
     tries = 0
 
     # determines what points on starting map are actually balls or holes
-    for x, row in enumerate(STARTING_MAP):
-        for y, is_ball in enumerate(row):
+    for y, row in enumerate(STARTING_MAP):
+        for x, is_ball in enumerate(row):
             if is_ball:
                 new_ball = BALL_SHADOW.get_rect()
                 new_ball = new_ball.move(x * BALL_RECT.width, y * BALL_RECT.height)
@@ -259,8 +288,9 @@ def setup():
                     all_balls.append(new_ball.copy())  # its a ball, so add to list of balls
 
     # setting sound
-    sound_manager = SoundManager(game_level) # what theme it needs to play?
-    sound_manager.play_background()
+    if replay_music:
+        sound_manager = SoundManager(game_level) # what theme it needs to play?
+        sound_manager.play_background()
 
     # setting overlay for whole map
     overlay = Overlay(game_level * 25, RED)
@@ -279,6 +309,7 @@ while True:
                 # the game is running!
                 ball_clicked = [ball for ball in all_balls if ball.collidepoint(x, y)]
                 empty_space_clicked = [empty_space for empty_space in all_empty_balls if empty_space.collidepoint(x, y)]
+
                 if mouse.ball and empty_space_clicked:
                     # you have ball in hand and clicked empty space
                     mouse.set_ball()  # tries to set a ball
@@ -286,6 +317,19 @@ while True:
                     # you don't have ball in hand and clicked ball
                     ball_clicked = ball_clicked[0]
                     mouse.grab_ball(ball_clicked)  # grabs a ball
+
+                button_clicked = [button for button in menu.func_buttons if button.rect.collidepoint(x, y)]
+                if button_clicked:
+                    # you clicked a button
+                    button_clicked = button_clicked[0]
+                    if button_clicked.name == 'home':
+                        # you clicked a button with name same as one of available levels
+                        is_paused = True
+
+                    if button_clicked.name == 'retry':
+                        setup(False)
+
+                    print(button_clicked.name)
             else:
                 # you are in main menu :)
                 button_clicked = [button for button in menu.all_buttons if button.rect.collidepoint(x, y)]
@@ -294,8 +338,11 @@ while True:
                     button_clicked = button_clicked[0]
                     if button_clicked.name in Level:
                         # you clicked a button with name same as one of available levels
-                        game_level = button_clicked.name  # sets new level of hardness
-                        setup()  # restarts the game
+                        if game_level != button_clicked.name:
+                            game_level = button_clicked.name  # sets new level of hardness
+                            setup()  # restarts the game
+                        else:
+                            is_paused = False
 
     game_display.fill((200, 200, 200))  # default background color
 
@@ -319,6 +366,8 @@ while True:
             # you are holding a ball, show it!
             game_display.blit(BALL, mouse.ball)
 
+        for button in menu.func_buttons:
+            game_display.blit(button.text, button.text_rect)
         overlay.draw()  # makes the screen more red
     else:
         # you are in main menu :)
