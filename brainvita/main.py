@@ -2,58 +2,22 @@ import pygame
 from copy import deepcopy
 from enum import IntEnum
 
+# author andrzej.bisewski@gmail.com
 
-# it works so whats the problem XD?
-# now lets work on commenting this one, and refactoring map drawing (but how?)
-# TODO sound
-
-STARTING_MAP = [
-       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 1, 1, 1, 0, 0, 0],
-       [0, 0, 0, 1, 1, 1, 0, 0, 0],
-       [0, 1, 1, 1, 1, 1, 1, 1, 0],
-       [0, 1, 1, 1, 2, 1, 1, 1, 0],
-       [0, 1, 1, 1, 1, 1, 1, 1, 0],
-       [0, 0, 0, 1, 1, 1, 0, 0, 0],
-       [0, 0, 0, 1, 1, 1, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0]]
-
-
-def print_grid():
-    for x in grid.map_arena:
-        print(x)
-pygame.init()
-
-RESOLUTION = (len(STARTING_MAP[0]) * 50, len(STARTING_MAP) * 50)
-game_display = pygame.display.set_mode(RESOLUTION)
-
-BALL_SHADOW = pygame.image.load('img/ball_shadow.png').convert_alpha()
-NO_BALL = pygame.image.load('img/no_ball.png').convert_alpha()
-BALL = pygame.image.load('img/ball.png').convert_alpha()
-BALL_RECT = BALL_SHADOW.get_rect()
-
-HOME_BUTTON = pygame.image.load('img/home.png').convert_alpha()
-RETRY_BUTTON = pygame.image.load('img/retry.png').convert_alpha()
-
-BORDER_SHADOW = pygame.image.load('img/border_shadow.png').convert_alpha()
-BORDER_LIGHT = pygame.image.load('img/border_light.png').convert_alpha()
-
-font = pygame.font.Font('fonts/Vera-Bold.ttf', 25)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-
-# END OF CONSTANTS
 
 class Ball:
     sprite = None
     sprite_shadow = None
+
     def __init__(self, rect):
         self.rect = rect
 
     @classmethod
     def set_sprite(cls, what_level):
+        # with more sprites i would chose one randomly from folder, but i don's soo..
         cls.sprite = pygame.image.load('img/%s.ball.png' % what_level).convert_alpha()
-        cls.sprite_shadow = pygame.image.load('img/%s.shadow.png' % what_level).convert_alpha()
+        cls.sprite_shadow = pygame.image.load('img/%s.ball_shadow.png' % what_level).convert_alpha()
+
 
 class Level(IntEnum):
     Normal, Hard, Hardcore = range(3)
@@ -108,16 +72,21 @@ def draw_background(map_to_render):
 
 
 class SoundManager:
-    def __init__(self, lvl):
-        self.lvl = lvl
+    lvl = None
 
-    def play_background(self):
-        pygame.mixer.music.load('music/%s.background.mp3' % self.lvl)
+    @classmethod
+    def set_level(cls, lvl):
+        cls.lvl = lvl
+
+    @classmethod
+    def play_background(cls):
+        pygame.mixer.music.load('music/%s.background.mp3' % cls.lvl)
         pygame.mixer.music.set_volume(0.10)
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(-1)
 
-    def play_sound(self):
-        effect = pygame.mixer.Sound('sound/%s.move.mp3' % self.lvl)
+    @classmethod
+    def play_sound(cls):
+        effect = pygame.mixer.Sound('sound/%s.move.wav' % cls.lvl)
         effect.play()
 
 
@@ -140,6 +109,8 @@ class Mouse:
         if grid.place(self.initial_cords, ball_cords):
             self.move()
             self.ball = None
+            return True
+        return False
 
     def move(self):
         pos = pygame.mouse.get_pos()
@@ -252,7 +223,46 @@ class Overlay:
         game_display.blit(s, (0, 0))  # renders on whole screen
 
 # END OF CLASSES
-# ACTUAL START
+
+# it works so whats the problem XD?
+# now lets work on commenting this one, and refactoring map drawing (but how?)
+
+# -------------------------------- ACTUAL START -------------------------------- #
+
+STARTING_MAP = [
+       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 1, 1, 1, 0, 0, 0],
+       [0, 0, 0, 1, 1, 1, 0, 0, 0],
+       [0, 1, 1, 1, 1, 1, 1, 1, 0],
+       [0, 1, 1, 1, 2, 1, 1, 1, 0],
+       [0, 1, 1, 1, 1, 1, 1, 1, 0],
+       [0, 0, 0, 1, 1, 1, 0, 0, 0],
+       [0, 0, 0, 1, 1, 1, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=256)
+pygame.init()
+pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=256)
+RESOLUTION = (len(STARTING_MAP[0]) * 50, len(STARTING_MAP) * 50)
+game_display = pygame.display.set_mode(RESOLUTION)
+
+
+NO_BALL = pygame.image.load('img/no_ball.png').convert_alpha()
+BALL = pygame.image.load('img/Level.Normal.ball.png').convert_alpha()
+BALL_RECT = BALL.get_rect()
+
+HOME_BUTTON = pygame.image.load('img/home.png').convert_alpha()
+RETRY_BUTTON = pygame.image.load('img/retry.png').convert_alpha()
+
+BORDER_SHADOW = pygame.image.load('img/border_shadow.png').convert_alpha()
+BORDER_LIGHT = pygame.image.load('img/border_light.png').convert_alpha()
+
+font = pygame.font.Font('fonts/Vera-Bold.ttf', 25)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+
+# END OF CONSTANTS
+
 all_balls = []  # contains all ball sprites except that one in hand
 all_empty_balls = []  # contains all empty spaces sprites for balls
 
@@ -285,17 +295,20 @@ def setup(replay_music=True):
     for y, row in enumerate(STARTING_MAP):
         for x, is_ball in enumerate(row):
             if is_ball:
-                new_ball = BALL_SHADOW.get_rect()
-                new_ball = new_ball.move(x * BALL_RECT.width, y * BALL_RECT.height)
-                all_empty_balls.append(new_ball)  # adds to list of holes
+                new_ball_rect = BALL_RECT
+                new_ball_rect = new_ball_rect.move(x * BALL_RECT.width, y * BALL_RECT.height)
+                new_ball = Ball(new_ball_rect)
+                all_empty_balls.append(new_ball.rect.copy())  # adds to list of holes
                 if is_ball == 1:
-                    all_balls.append(new_ball.copy())  # its a ball, so add to list of balls
+                    all_balls.append(new_ball.rect)  # its a ball, so add to list of balls
 
     # setting sound
     if replay_music:
-        sound_manager = SoundManager(game_level) # what theme it needs to play?
-        sound_manager.play_background()
+        SoundManager.set_level(game_level) # what theme it needs to play?
+        SoundManager.play_background()
 
+    # sets sprite for balls
+    Ball.set_sprite(game_level)
     # setting overlay for whole map
     overlay = Overlay(game_level * 25, RED)
 
@@ -316,7 +329,9 @@ while True:
 
                 if mouse.ball and empty_space_clicked:
                     # you have ball in hand and clicked empty space
-                    mouse.set_ball()  # tries to set a ball
+                    if mouse.set_ball():  # tries to set a ball
+                        SoundManager.play_sound()
+
                 elif not mouse.ball and ball_clicked:
                     # you don't have ball in hand and clicked ball
                     ball_clicked = ball_clicked[0]
@@ -349,7 +364,6 @@ while True:
     game_display.fill((200, 200, 200))  # default background color
 
     if not is_paused:
-        # print_grid()
         # the game is running!
         if mouse.ball:
             # you are holding a ball, move it
@@ -361,13 +375,15 @@ while True:
             # draws all holes
             game_display.blit(NO_BALL, empty_space)
 
+
         for ball in all_balls:
             # draws all balls
-            game_display.blit(BALL_SHADOW, ball)
+            game_display.blit(Ball.sprite_shadow, ball)
+            game_display.blit(Ball.sprite, ball)
 
         if mouse.ball:
             # you are holding a ball, show it!
-            game_display.blit(BALL, mouse.ball)
+            game_display.blit(Ball.sprite, mouse.ball)
 
         for button in menu.func_buttons:
             game_display.blit(button.text, button.text_rect)
