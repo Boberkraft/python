@@ -7,7 +7,6 @@ from enum import IntEnum
 # now lets work on commenting this one, and refactoring map drawing (but how?)
 # TODO sound
 
-
 STARTING_MAP = [
        [0, 0, 0, 0, 0, 0, 0, 0, 0],
        [0, 0, 0, 1, 1, 1, 0, 0, 0],
@@ -20,7 +19,9 @@ STARTING_MAP = [
        [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
 
-
+def print_grid():
+    for x in grid.map_arena:
+        print(x)
 pygame.init()
 
 RESOLUTION = (len(STARTING_MAP[0]) * 50, len(STARTING_MAP) * 50)
@@ -43,6 +44,16 @@ RED = (255, 0, 0)
 
 # END OF CONSTANTS
 
+class Ball:
+    sprite = None
+    sprite_shadow = None
+    def __init__(self, rect):
+        self.rect = rect
+
+    @classmethod
+    def set_sprite(cls, what_level):
+        cls.sprite = pygame.image.load('img/%s.ball.png' % what_level).convert_alpha()
+        cls.sprite_shadow = pygame.image.load('img/%s.shadow.png' % what_level).convert_alpha()
 
 class Level(IntEnum):
     Normal, Hard, Hardcore = range(3)
@@ -140,12 +151,11 @@ class Grid:
         self.map_arena = deepcopy(map_arena)
 
     def check(self, who, where):
-        x = abs(who[0] - where[0])
-        y = abs(who[1] - where[1])
+        x = abs(who[1] - where[1])
+        y = abs(who[0] - where[0])
 
         if max(x, y) == 2:
             if min(x, y) == 0:
-
                 return True
         return False
         # return any([abs(x - y) == 2 or abs(x - y) == 0 for x, y in zip(who, where)])
@@ -158,21 +168,15 @@ class Grid:
         if who == where:
             self.make_ball(where)
             return True
-
-        if self.map_arena[where[0]][where[1]] == 2:
+        if self.map_arena[where[1]][where[0]] == 2:
             if self.check(who, where):
-
-                offset = ((who[0] - where[0]) // 2, (who[1] - where[1]) // 2)
-                ball_between = (where[0] + offset[0],  where[1] + offset[1])
-
-
-
-                if self.map_arena[ball_between[0]][ball_between[1]] == 1:
-
+                offset = ((who[1] - where[1]) // 2, (who[0] - where[0]) // 2)
+                ball_between = (where[0] + offset[1],  where[1] + offset[0])
+                if self.map_arena[ball_between[1]][ball_between[0]] == 1:
                     self.remove(ball_between)
-                    self.map_arena[ball_between[0]][ball_between[1]] = 2
-                    self.map_arena[who[0]][who[1]] = 2
-                    self.map_arena[where[0]][where[1]] = 1
+                    self.map_arena[ball_between[1]][ball_between[0]] = 2
+                    self.map_arena[who[1]][who[0]] = 2
+                    self.map_arena[where[1]][where[0]] = 1
                     self.make_ball(where)
                     return True
         return False
@@ -328,8 +332,6 @@ while True:
 
                     if button_clicked.name == 'retry':
                         setup(False)
-
-                    print(button_clicked.name)
             else:
                 # you are in main menu :)
                 button_clicked = [button for button in menu.all_buttons if button.rect.collidepoint(x, y)]
@@ -347,6 +349,7 @@ while True:
     game_display.fill((200, 200, 200))  # default background color
 
     if not is_paused:
+        # print_grid()
         # the game is running!
         if mouse.ball:
             # you are holding a ball, move it
