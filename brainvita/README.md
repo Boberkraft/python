@@ -9,5 +9,6 @@ pip install pygame
 
  TODO:
 - [x] Cool graphics
-- [ ] Cool Sound effects
-- [ ] Even more cool primitive gui
+- [x] Cool Sound effects
+- [x] Even more cool primitive gui
+- [ ] level system
