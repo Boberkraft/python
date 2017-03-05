@@ -5,10 +5,10 @@ Requires pygame
 ```
 pip install pygame
 ```
-![game in action](http://i.imgur.com/Re04iho.gif)
+![game in action](demo.gif)
 
  TODO:
 - [x] Cool graphics
 - [x] Cool Sound effects
 - [x] Even more cool primitive gui
-- [ ] level system
+- [ ] More level system

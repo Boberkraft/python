@@ -2,7 +2,9 @@ import pygame
 from copy import deepcopy
 from enum import IntEnum
 
-# author andrzej.bisewski@gmail.com
+# author Andrzej Bisewski
+# andrzej.bisewski@gmail.com
+# just credit me
 
 
 class Ball:
@@ -229,6 +231,7 @@ class Overlay:
 
 # -------------------------------- ACTUAL START -------------------------------- #
 
+# map that is loaded at start
 STARTING_MAP = [
        [0, 0, 0, 0, 0, 0, 0, 0, 0],
        [0, 0, 0, 1, 1, 1, 0, 0, 0],
@@ -240,13 +243,14 @@ STARTING_MAP = [
        [0, 0, 0, 1, 1, 1, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
+# sets small buffer  so sound apear fast
 pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=256)
 pygame.init()
-pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=256)
+
 RESOLUTION = (len(STARTING_MAP[0]) * 50, len(STARTING_MAP) * 50)
 game_display = pygame.display.set_mode(RESOLUTION)
 
-
+# default sprites
 NO_BALL = pygame.image.load('img/no_ball.png').convert_alpha()
 BALL = pygame.image.load('img/Level.Normal.ball.png').convert_alpha()
 BALL_RECT = BALL.get_rect()
@@ -257,10 +261,11 @@ RETRY_BUTTON = pygame.image.load('img/retry.png').convert_alpha()
 BORDER_SHADOW = pygame.image.load('img/border_shadow.png').convert_alpha()
 BORDER_LIGHT = pygame.image.load('img/border_light.png').convert_alpha()
 
+# font
 font = pygame.font.Font('fonts/Vera-Bold.ttf', 25)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
-
+GREY = (200, 200, 200)
 # END OF CONSTANTS
 
 all_balls = []  # contains all ball sprites except that one in hand
@@ -361,7 +366,7 @@ while True:
                         else:
                             is_paused = False
 
-    game_display.fill((200, 200, 200))  # default background color
+    game_display.fill(GREY)  # default background color
 
     if not is_paused:
         # the game is running!
