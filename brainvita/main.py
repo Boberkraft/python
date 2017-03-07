@@ -1,4 +1,9 @@
+import sys
 import pygame
+import glob
+
+sys.path.append('core')
+from DataManager import DataManager
 from copy import deepcopy
 from enum import IntEnum
 
@@ -102,13 +107,13 @@ class Mouse:
 
     def grab_ball(self, ball):
         self.initial = ball
-        self.initial_cords = grid.get_cords(ball)
+        self.initial_cords = GLOB.grid.get_cords(ball)
         self.ball = ball
-        all_balls.remove(self.ball)
+        GLOB.all_balls.remove(self.ball)
 
     def set_ball(self):
-        ball_cords = grid.get_cords(self.ball)
-        if grid.place(self.initial_cords, ball_cords):
+        ball_cords = GLOB.grid.get_cords(self.ball)
+        if GLOB.grid.place(self.initial_cords, ball_cords):
             self.move()
             self.ball = None
             return True
@@ -135,7 +140,7 @@ class Grid:
 
     def remove(self, where):
         pos = self.get_pos(where)
-        [all_balls.remove(ball) for ball in all_balls if ball.collidepoint(pos[0], pos[1]) if ball != mouse.ball]
+        [GLOB.all_balls.remove(ball) for ball in GLOB.all_balls if ball.collidepoint(pos[0], pos[1]) if ball != mouse.ball]
 
     def place(self, who, where):
         if who == where:
@@ -157,7 +162,7 @@ class Grid:
     @staticmethod
     def make_ball(where):
         pos = pygame.Rect(where[0] * BALL_RECT.height, where[1] * BALL_RECT.width, BALL_RECT.width, BALL_RECT.height)
-        all_balls.append(pos)
+        GLOB.all_balls.append(pos)
 
     @staticmethod
     def get_cords(who):
@@ -224,6 +229,9 @@ class Overlay:
         s.fill(self.color)
         game_display.blit(s, (0, 0))  # renders on whole screen
 
+
+
+
 # END OF CLASSES
 
 # it works so whats the problem XD?
@@ -243,6 +251,7 @@ STARTING_MAP = [
        [0, 0, 0, 1, 1, 1, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
+
 # sets small buffer  so sound apear fast
 pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=256)
 pygame.init()
@@ -251,6 +260,7 @@ RESOLUTION = (len(STARTING_MAP[0]) * 50, len(STARTING_MAP) * 50)
 game_display = pygame.display.set_mode(RESOLUTION)
 
 # default sprites
+
 NO_BALL = pygame.image.load('img/no_ball.png').convert_alpha()
 BALL = pygame.image.load('img/Level.Normal.ball.png').convert_alpha()
 BALL_RECT = BALL.get_rect()
@@ -268,14 +278,18 @@ RED = (255, 0, 0)
 GREY = (200, 200, 200)
 # END OF CONSTANTS
 
-all_balls = []  # contains all ball sprites except that one in hand
-all_empty_balls = []  # contains all empty spaces sprites for balls
 
-game_level = None  # chosen level
-overlay = None  # chosen overlay
-tries = None  # number of tries
-grid = None  # object containing actual grid
-is_paused = True  # is main menu turned on?
+class GLOB:
+    all_balls = []  # contains all ball sprites except that one in hand
+    all_empty_balls = []  # contains all empty spaces sprites for balls
+    game_theme = None  # chosen level
+    overlay = None  # chosen overlay
+    tries = None  # number of tries
+    grid = None  # object containing actual grid
+    is_paused = True  # is main menu turned on?
+    actual_map = 1  # what map it should load?
+    starting_grid = None  # list with numbers representing map
+    MAX_MAPS = len(glob.glob('maps/*.map'))  # number of maps in maps folder
 
 menu = Menu()  # main menu
 for name, member in Level.__members__.items():
@@ -286,36 +300,42 @@ menu.add_func_button('retry', RETRY_BUTTON)
 mouse = Mouse()   # mouse pointer that can hold one ball
 
 
+
 def setup(replay_music=True):
     # the setup that starts the game
-    global grid, tries, all_balls, all_empty_balls, is_paused, overlay
-    is_paused = False
-    all_balls = []
-    all_empty_balls = []
 
-    grid = Grid(STARTING_MAP)  # load this map
-    tries = 0
+    GLOB.is_paused = False
+    GLOB.all_balls = []
+    GLOB.all_empty_balls = []
+    GLOB.tries = 0
+
+    print('Loading...')
+    GLOB.starting_grid = DataManager.get_data('maps/%s.map' % GLOB.actual_map)  # load chosen map
+    GLOB.grid = Grid(GLOB.starting_grid)  # load this map
+
+
 
     # determines what points on starting map are actually balls or holes
-    for y, row in enumerate(STARTING_MAP):
+    for y, row in enumerate(GLOB.starting_grid):
         for x, is_ball in enumerate(row):
             if is_ball:
                 new_ball_rect = BALL_RECT
                 new_ball_rect = new_ball_rect.move(x * BALL_RECT.width, y * BALL_RECT.height)
                 new_ball = Ball(new_ball_rect)
-                all_empty_balls.append(new_ball.rect.copy())  # adds to list of holes
+                GLOB.all_empty_balls.append(new_ball.rect.copy())  # adds to list of holes
                 if is_ball == 1:
-                    all_balls.append(new_ball.rect)  # its a ball, so add to list of balls
+                    GLOB.all_balls.append(new_ball.rect)  # its a ball, so add to list of balls
 
     # setting sound
     if replay_music:
-        SoundManager.set_level(game_level) # what theme it needs to play?
+        SoundManager.set_level(GLOB.game_theme)  # what theme it needs to play?
         SoundManager.play_background()
+        GLOB.actual_map = 1  # you just changed theme!
 
     # sets sprite for balls
-    Ball.set_sprite(game_level)
+    Ball.set_sprite(GLOB.game_theme)
     # setting overlay for whole map
-    overlay = Overlay(game_level * 25, RED)
+    GLOB.overlay = Overlay(GLOB.game_theme * 0, RED)
 
 while True:
 
@@ -327,15 +347,21 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             # you clicked
             x, y = event.pos  # position of cursor
-            if not is_paused:
+            if not GLOB.is_paused:
                 # the game is running!
-                ball_clicked = [ball for ball in all_balls if ball.collidepoint(x, y)]
-                empty_space_clicked = [empty_space for empty_space in all_empty_balls if empty_space.collidepoint(x, y)]
+                ball_clicked = [ball for ball in GLOB.all_balls if ball.collidepoint(x, y)]
+                empty_space_clicked = [empty_space for empty_space in GLOB.all_empty_balls if empty_space.collidepoint(x, y)]
 
                 if mouse.ball and empty_space_clicked:
                     # you have ball in hand and clicked empty space
                     if mouse.set_ball():  # tries to set a ball
                         SoundManager.play_sound()
+                        if len(GLOB.all_balls) <= 1:
+                            # bro you have only one ball left! you won
+                            if GLOB.actual_map < GLOB.MAX_MAPS:
+                                # there are more maps that you can play
+                                GLOB.actual_map += 1
+                            setup(False)
 
                 elif not mouse.ball and ball_clicked:
                     # you don't have ball in hand and clicked ball
@@ -348,7 +374,7 @@ while True:
                     button_clicked = button_clicked[0]
                     if button_clicked.name == 'home':
                         # you clicked a button with name same as one of available levels
-                        is_paused = True
+                        GLOB.is_paused = True
 
                     if button_clicked.name == 'retry':
                         setup(False)
@@ -360,28 +386,28 @@ while True:
                     button_clicked = button_clicked[0]
                     if button_clicked.name in Level:
                         # you clicked a button with name same as one of available levels
-                        if game_level != button_clicked.name:
-                            game_level = button_clicked.name  # sets new level of hardness
+                        if GLOB.game_theme != button_clicked.name:
+                            GLOB.game_theme = button_clicked.name  # sets new level of hardness
                             setup()  # restarts the game
                         else:
-                            is_paused = False
+                            GLOB.is_paused = False
 
     game_display.fill(GREY)  # default background color
 
-    if not is_paused:
+    if not GLOB.is_paused:
         # the game is running!
         if mouse.ball:
             # you are holding a ball, move it
             mouse.move()
 
-        draw_background(grid.map_arena)  # draws contours of main map
+        draw_background(GLOB.grid.map_arena)  # draws contours of main map
 
-        for empty_space in all_empty_balls:
+        for empty_space in GLOB.all_empty_balls:
             # draws all holes
             game_display.blit(NO_BALL, empty_space)
 
 
-        for ball in all_balls:
+        for ball in GLOB.all_balls:
             # draws all balls
             game_display.blit(Ball.sprite_shadow, ball)
             game_display.blit(Ball.sprite, ball)
@@ -392,8 +418,9 @@ while True:
 
         for button in menu.func_buttons:
             game_display.blit(button.text, button.text_rect)
-        overlay.draw()  # makes the screen more red
+        GLOB.overlay.draw()  # makes the screen more red
     else:
+        GLOB.actual_map = 1
         # you are in main menu :)
         draw_background(menu.map_arena)  # draws contours of main menu
         for button in menu.all_buttons:
