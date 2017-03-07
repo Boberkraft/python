@@ -187,35 +187,42 @@ class Menu:
             self.text = font.render(self.caption, True, (97 * self.name,97,97))
             self.text_rect = self.text.get_rect(center=self.rect.center)
 
-    def __init__(self):
-        self.all_buttons = []
-        self.func_buttons = []
-        self.map_arena = []
-        self.map_arena.append([0] * len(STARTING_MAP[0]))
+    all_buttons = []
+    func_buttons = []
+    map_arena = []
 
-    def add_func_button(self, name, img):
-        new_button_rect = pygame.Rect(len(self.func_buttons) * HOME_BUTTON.get_width()  * 1.5 + 10 ,
+
+    @classmethod
+    def add_func_button(cls, name, img):
+        new_button_rect = pygame.Rect(len(cls.func_buttons) * HOME_BUTTON.get_width() * 1.5 + 10,
                                       10,
                                       HOME_BUTTON.get_width(),
                                       HOME_BUTTON.get_height())
         new_button = Menu.Button(name, 'you cant see this!', new_button_rect)
         new_button.text = img
-        self.func_buttons.append(new_button)
+        cls.func_buttons.append(new_button)
 
-    def add_button(self, name, caption):
+    @classmethod
+    def add_button(cls, name, caption):
         # render in the middle of screen
         new_button_rect = pygame.Rect((3 * BALL_RECT.width,  # x
-                                       (len(self.map_arena)) * BALL_RECT.height),  # y
+                                       (len(cls.map_arena)) * BALL_RECT.height),  # y
                                       ((len(STARTING_MAP[0]) - 6) * BALL_RECT.width,  # width
                                        BALL_RECT.width))  # height
         new_button = Menu.Button(name, caption, new_button_rect)
         new_button.set_text()
-        self.all_buttons.append(new_button)
-
+        cls.all_buttons.append(new_button)
 
         new_row = [0 if abs(index - len(STARTING_MAP)//2) > 1 else 1 for index, y in enumerate(STARTING_MAP)]
-        self.map_arena.append(new_row)
-        self.map_arena.append([0] * len(STARTING_MAP[0]))
+        cls.map_arena.append(new_row)
+        cls.map_arena.append([0] * len(STARTING_MAP[0]))
+
+    @classmethod
+    def new_menu(cls, starting_grid):
+        cls.all_buttons = []
+        cls.func_buttons = []
+        cls.map_arena = []
+        cls.map_arena.append([0] * len(starting_grid[0]))
 
 
 class Overlay:
@@ -242,13 +249,13 @@ class Overlay:
 # map that is loaded at start
 STARTING_MAP = [
        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 1, 1, 1, 0, 0, 0],
-       [0, 0, 0, 1, 1, 1, 0, 0, 0],
-       [0, 1, 1, 1, 1, 1, 1, 1, 0],
-       [0, 1, 1, 1, 2, 1, 1, 1, 0],
-       [0, 1, 1, 1, 1, 1, 1, 1, 0],
-       [0, 0, 0, 1, 1, 1, 0, 0, 0],
-       [0, 0, 0, 1, 1, 1, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
 
@@ -283,6 +290,7 @@ class GLOB:
     all_balls = []  # contains all ball sprites except that one in hand
     all_empty_balls = []  # contains all empty spaces sprites for balls
     game_theme = None  # chosen level
+    won = False  # have you won the game?
     overlay = None  # chosen overlay
     tries = None  # number of tries
     grid = None  # object containing actual grid
@@ -291,14 +299,27 @@ class GLOB:
     starting_grid = None  # list with numbers representing map
     MAX_MAPS = len(glob.glob('maps/*.map'))  # number of maps in maps folder
 
-menu = Menu()  # main menu
-for name, member in Level.__members__.items():
-    # adds buttons to main menu from list of available levels of hardness
-    menu.add_button(member, name)
-menu.add_func_button('home', HOME_BUTTON)
-menu.add_func_button('retry', RETRY_BUTTON)
+# main menu
+
+
 mouse = Mouse()   # mouse pointer that can hold one ball
 
+
+def draw_menu(won=False):
+    if won:
+        GLOB.won = True
+        GLOB.is_paused = True
+        Menu.new_menu(STARTING_MAP)
+        Menu.add_button(Level.Normal, 'You Won!')
+    else:
+        GLOB.won = False
+        GLOB.game_theme = None
+        Menu.new_menu(STARTING_MAP)
+        for name, member in Level.__members__.items():
+            # adds buttons to main menu from list of available levels of hardness
+            Menu.add_button(member, name)
+        Menu.add_func_button('home', HOME_BUTTON)
+        Menu.add_func_button('retry', RETRY_BUTTON)
 
 
 def setup(replay_music=True):
@@ -308,11 +329,13 @@ def setup(replay_music=True):
     GLOB.all_balls = []
     GLOB.all_empty_balls = []
     GLOB.tries = 0
+    GLOB.won = False
 
-    print('Loading...')
+    # print('Loading...')
     GLOB.starting_grid = DataManager.get_data('maps/%s.map' % GLOB.actual_map)  # load chosen map
     GLOB.grid = Grid(GLOB.starting_grid)  # load this map
 
+    # makes menu
 
 
     # determines what points on starting map are actually balls or holes
@@ -337,6 +360,7 @@ def setup(replay_music=True):
     # setting overlay for whole map
     GLOB.overlay = Overlay(GLOB.game_theme * 0, RED)
 
+draw_menu()
 while True:
 
     for event in pygame.event.get():
@@ -361,6 +385,10 @@ while True:
                             if GLOB.actual_map < GLOB.MAX_MAPS:
                                 # there are more maps that you can play
                                 GLOB.actual_map += 1
+                            else:
+                                # you won last map!
+                                draw_menu(won=True)
+                                continue
                             setup(False)
 
                 elif not mouse.ball and ball_clicked:
@@ -368,24 +396,28 @@ while True:
                     ball_clicked = ball_clicked[0]
                     mouse.grab_ball(ball_clicked)  # grabs a ball
 
-                button_clicked = [button for button in menu.func_buttons if button.rect.collidepoint(x, y)]
+                button_clicked = [button for button in Menu.func_buttons if button.rect.collidepoint(x, y)]
                 if button_clicked:
                     # you clicked a button
                     button_clicked = button_clicked[0]
                     if button_clicked.name == 'home':
                         # you clicked a button with name same as one of available levels
                         GLOB.is_paused = True
-
                     if button_clicked.name == 'retry':
-                        setup(False)
+                        setup(replay_music=False)
+
             else:
                 # you are in main menu :)
-                button_clicked = [button for button in menu.all_buttons if button.rect.collidepoint(x, y)]
+                button_clicked = [button for button in Menu.all_buttons if button.rect.collidepoint(x, y)]
                 if button_clicked:
                     # you clicked a button
+
                     button_clicked = button_clicked[0]
                     if button_clicked.name in Level:
                         # you clicked a button with name same as one of available levels
+                        if GLOB.won:
+                            draw_menu(won=False)
+                            continue
                         if GLOB.game_theme != button_clicked.name:
                             GLOB.game_theme = button_clicked.name  # sets new level of hardness
                             setup()  # restarts the game
@@ -416,14 +448,14 @@ while True:
             # you are holding a ball, show it!
             game_display.blit(Ball.sprite, mouse.ball)
 
-        for button in menu.func_buttons:
+        for button in Menu.func_buttons:
             game_display.blit(button.text, button.text_rect)
         GLOB.overlay.draw()  # makes the screen more red
     else:
         GLOB.actual_map = 1
         # you are in main menu :)
-        draw_background(menu.map_arena)  # draws contours of main menu
-        for button in menu.all_buttons:
+        draw_background(Menu.map_arena)  # draws contours of main menu
+        for button in Menu.all_buttons:
             # draws all buttons
             game_display.blit(button.text, button.text_rect)
 
