@@ -3,7 +3,7 @@ Everything works so have fun.
 
 Requires pygame
 ```
-pip install pygame
+pip3 install pygame
 ```
 ![game in action](demo.gif)
 
@@ -11,4 +11,6 @@ pip install pygame
 - [x] Cool graphics
 - [x] Cool Sound effects
 - [x] Even more cool primitive gui
-- [ ] More level system
+- [x] More levels
+- [ ] Hidden event
+- [ ] Extra attractions for each theme.
