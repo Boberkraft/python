@@ -12,5 +12,5 @@ pip3 install pygame
 - [x] Cool Sound effects
 - [x] Even more cool primitive gui
 - [x] More levels
-- [ ] Hidden event
+- [x] Hidden event
 - [ ] Extra attractions for each theme.

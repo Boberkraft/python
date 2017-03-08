@@ -1,16 +1,16 @@
 import sys
 import pygame
 import glob
+from copy import deepcopy
+from enum import IntEnum
 
 sys.path.append('core')
 from DataManager import DataManager
-from copy import deepcopy
-from enum import IntEnum
+
 
 # author Andrzej Bisewski
 # andrzej.bisewski@gmail.com
 # just credit me
-
 
 class Ball:
     sprite = None
@@ -24,6 +24,9 @@ class Ball:
         # with more sprites i would chose one randomly from folder, but i don's soo..
         cls.sprite = pygame.image.load('img/%s.ball.png' % what_level).convert_alpha()
         cls.sprite_shadow = pygame.image.load('img/%s.ball_shadow.png' % what_level).convert_alpha()
+        if DataManager.get_time() in '21:36 21:37 21:38'.split():
+            cls.sprite = pygame.image.load('img/%s.ball.png' % 'Hidden').convert_alpha()
+            cls.sprite_shadow = pygame.image.load('img/%s.ball_shadow.png' % 'Hidden').convert_alpha()
 
 
 class Level(IntEnum):
@@ -100,7 +103,7 @@ class SoundManager:
 class Mouse:
     ball = None
     ball_cords = None
-
+    last_pos = None
     def __init__(self):
         self.initial = None
         self.initial_cords = None
@@ -110,8 +113,10 @@ class Mouse:
         self.initial_cords = GLOB.grid.get_cords(ball)
         self.ball = ball
         GLOB.all_balls.remove(self.ball)
+        self.last_pos = pygame.mouse.get_pos()
 
     def set_ball(self):
+        self.last_pos = pygame.mouse.get_pos()
         ball_cords = GLOB.grid.get_cords(self.ball)
         if GLOB.grid.place(self.initial_cords, ball_cords):
             self.move()
@@ -120,8 +125,27 @@ class Mouse:
         return False
 
     def move(self):
+
         pos = pygame.mouse.get_pos()
-        self.ball.center = pos[0], pos[1]
+
+        dx = self.last_pos[0] - pos[0]
+        dy = self.last_pos[1] - pos[1]
+
+        if GLOB.game_theme == Level.Hardcore:
+            new_pos = (pos[0] + dx * 2, pos[1] + dy *2)
+            x,y = new_pos
+            if not (x < 0 or y < 0 or x > 50 * len(STARTING_MAP) or y > 50 * len(STARTING_MAP)):
+                 pygame.mouse.set_pos(new_pos)
+            else:
+                self.last_pos = pos
+                GLOB.grid.place(self.initial_cords, self.initial_cords)
+                self.ball = None
+                return
+        else:
+            new_pos = pos
+        self.ball.center = new_pos
+
+        self.last_pos = new_pos
 
 
 class Grid:
@@ -235,8 +259,6 @@ class Overlay:
         s.set_alpha(self.alpha)
         s.fill(self.color)
         game_display.blit(s, (0, 0))  # renders on whole screen
-
-
 
 
 # END OF CLASSES
@@ -437,7 +459,6 @@ while True:
         for empty_space in GLOB.all_empty_balls:
             # draws all holes
             game_display.blit(NO_BALL, empty_space)
-
 
         for ball in GLOB.all_balls:
             # draws all balls

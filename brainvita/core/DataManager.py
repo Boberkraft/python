@@ -1,5 +1,5 @@
 import json
-
+from time import strftime, localtime
 
 class DataManager:
 
@@ -19,3 +19,7 @@ class DataManager:
         """Saves statistics to file"""
         with open(path, 'w') as ff:
             json.dump(data, ff)
+
+    @staticmethod
+    def get_time():
+        return strftime('%H:%M', localtime())
