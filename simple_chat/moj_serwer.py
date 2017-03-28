@@ -3,10 +3,9 @@ import rpyc
 class UsernameTaken(Exception): pass
 class InvalidCommunication(Exception): pass
 
-
 class User:
-    """Server can invoke
-    get_msg and ping"""
+    """Instance is given to user as a interface
+    Server can invoke get_msg and ping"""
     def __init__(self, connection=None, name=None, communication=None):
         assert connection is not None, 'Who are you?'
         assert name is not None, 'Whats your name?'
@@ -37,7 +36,7 @@ class User:
 
 
 class Server:
-
+    """Main server having control of adding users and invoking functions on usersite"""
     def __init__(self):
         self.connections = {}  # connection: user object
         self.usernames = {}  # username: user object
@@ -52,12 +51,14 @@ class Server:
         """Retrieves user object basing on username or connection"""
         if name:
             return self.usernames.get(name, False)
+        elif conn:
+            return self.connections.get(str(conn), False)
         else:
-            return self.connections.get([conn], False)
+            return False
 
     def add_user(self, user):
         """Adds user to server"""
-        if not self.get_user(user) and user.connection not in self.connections:
+        if not self.get_user(name=str(user)) and user.connection not in self.connections:
             # checks user connection and name
             self.usernames[str(user)] = user
             self.connections[repr(user)] = user
@@ -65,9 +66,9 @@ class Server:
         else:
             raise UsernameTaken('Username already taken. Choose another')
 
-    def remove_user(self, *args, **kwargs):
+    def remove_user(self, name=None, conn=None):
         """Remove user basing on connection """
-        user = self.get_user(*args, **kwargs)  # find user
+        user = self.get_user(name, conn)  # find user
         if user:
             # delete
             del self.connections[repr(user)]
@@ -88,7 +89,7 @@ class ChatService(rpyc.SlaveService):
         connection = self.exposed_getconn()  # identifying connection
         new_user = User(connection, *args, **kwargs)  # makes new user
         if server.add_user(new_user):
-            # user can be added - passed tests
+            # user can be added
             print('Connected users:', list(server.usernames.keys()))
             return new_user  # returning interface
         else:
@@ -100,7 +101,8 @@ class ChatService(rpyc.SlaveService):
 
     def on_disconnect(self):
         # removing disconnected user
-        server.remove_user(conn=self.exposed_getconn())
+        conn = self.exposed_getconn()
+        server.remove_user(conn=conn)
         print('Connected users:', list(server.usernames.keys()))
 
 
