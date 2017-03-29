@@ -1,4 +1,6 @@
 from tkinter import *
+import tkinter.simpledialog
+
 import rpyc
 import queue
 from queue import Queue
@@ -8,18 +10,17 @@ c = rpyc.connect('localhost', 18812)
 bgsrv = rpyc.BgServingThread(c)
 
 class GUI:
+    username = None
 
-
-    def __init__(self, username):
+    def __init__(self, root):
         self.to_read = Queue()
         # self.to_read.put(1122)
         # print(self.to_read.get(block=False))
-        self.root = Tk()
+        self.root = root
         self.conn = None
 
-        self.root.title(username)
+
         # self.conn = self.exposed_conn
-        self.exposed_username = username
 
         self.box = Text(self.root, width=30, height=10)
         self.box.pack()
@@ -31,13 +32,22 @@ class GUI:
         self.input_what = Entry(self.root)
         self.input_what.pack(fill=X)
 
-        Button(self.root, text='Wyslij', command=self.xd).pack()
-
+        Button(self.root, text='Wyslij', command=self.send_msg).pack()
+        username = tkinter.simpledialog.askstring('Input', 'Enter Username')
+        username = tkinter.simpledialog.askstring('Input', 'Enter Username')
         self.display_data()
 
     def exposed_get_msg(self, msg):
+        try:
+            # DONT DONT KWARG UNPACING **
+            # because dict send by server is not a 100% legit dict :|
+            # shoud i send a list o (key, val) tuples?
+            print(msg['who'])
+            print(msg['what'])
+            msg = '[{who}]: {what}'.format(who=msg['who'],what=msg['what'])
+        except KeyError:
+            print('Server messed dialog')
 
-        # msg = '[{who}]:{what}'.format(msg['who', msg['what']])
         self.to_read.put(msg)
 
     def send_msg(self):
@@ -62,15 +72,18 @@ class GUI:
         info['get_msg'] = self.exposed_get_msg
         return info
 
-    def xd(self):
-        self.conn.server.send_msg(self, '123', 'siemka')
-username = input('Username: ')
+root = Tk()
+root.title('Chat')
 
-gui = GUI(username)
+gui = GUI(root)
+
+gui.exposed_username = 'Bobi'
 # information = {'username': gui.exposed_username,
 #                'get_msg': gui.exposed_get_msg}
 gui.conn = c.root.connect(gui.get_information())
+
 gui.root.mainloop()
+
 #
 # username = input('Your username: ')
 #

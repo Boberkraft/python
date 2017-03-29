@@ -13,7 +13,7 @@ class Validate:
         try:
             data['username'] = info['username']
             data['get_msg'] = info['get_msg']
-            if not not data['username'] or not data['username'].isalnum():
+            if not data['username'] or not data['username'].isalnum():
                 raise AttributeError
         except AttributeError as ee:
             raise AttributeError("Sorry you don't have :", ee)
@@ -30,7 +30,7 @@ class User:
 
         self.server = server  # server
         self.connection = str(connection)  # connection
-        self.name = username  # username
+        self.username = username  # username
         try:
             self.get_msg = get_msg  # function for sending msg
             # self.ping = communication['ping']  # function for pinging
@@ -46,7 +46,7 @@ class User:
 
     def __str__(self):
         """return name of user"""
-        return self.name
+        return self.username
 
     def __repr__(self):
         """return connection of user"""
@@ -89,8 +89,8 @@ class Server:
         connection = self.get_user(conn=user.connection)
 
         if(username is connection) and username is not False:
-            return True
-        return False
+            return False
+        return True
 
     def remove_user(self, name=None, conn=None):
         """Remove user basing on connection """
@@ -118,7 +118,6 @@ class ChatService(rpyc.SlaveService):
         """Function returning interface for sending messages"""
         connection = self.exposed_getconn()  # identifying connection
         client_data = Validate.check_client(info)
-        print(client_data)
         new_user = User(connection, **client_data)  # makes new user
         if server.add_user(new_user):
             # user can be added
