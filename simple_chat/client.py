@@ -25,16 +25,15 @@ class GUI:
         self.box = Text(self.root, width=30, height=10)
         self.box.pack()
 
-        Label(self.root, text='Username').pack(fill=X)
+        Label(self.root, text='To who').pack(fill=X)
         self.input_where = Entry(self.root)
         self.input_where.pack(fill=X)
-        Label(self.root, text='What to send').pack(fill=X)
+        Label(self.root, text='Message').pack(fill=X)
         self.input_what = Entry(self.root)
         self.input_what.pack(fill=X)
 
         Button(self.root, text='Wyslij', command=self.send_msg).pack()
-        username = tkinter.simpledialog.askstring('Input', 'Enter Username')
-        username = tkinter.simpledialog.askstring('Input', 'Enter Username')
+
         self.display_data()
 
     def exposed_get_msg(self, msg):
@@ -42,8 +41,6 @@ class GUI:
             # DONT DONT KWARG UNPACING **
             # because dict send by server is not a 100% legit dict :|
             # shoud i send a list o (key, val) tuples?
-            print(msg['who'])
-            print(msg['what'])
             msg = '[{who}]: {what}'.format(who=msg['who'],what=msg['what'])
         except KeyError:
             print('Server messed dialog')
@@ -77,7 +74,7 @@ root.title('Chat')
 
 gui = GUI(root)
 
-gui.exposed_username = 'Bobi'
+gui.exposed_username = input('Your username: ')
 # information = {'username': gui.exposed_username,
 #                'get_msg': gui.exposed_get_msg}
 gui.conn = c.root.connect(gui.get_information())
