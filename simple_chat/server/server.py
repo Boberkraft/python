@@ -35,6 +35,7 @@ class Server:
             # checks user connection and name
             self.usernames[str(user)] = user
             self.connections[repr(user)] = user
+            user.get('msg', {'who': 'server', 'what': 'Welcome {} on our server!'.format(user)})
             return True
         else:
             raise UsernameTaken('Username already taken. Choose another')
@@ -67,4 +68,4 @@ class Server:
         del self.usernames
 
     def show_users(self):
-        print('Connected users:', list(self.server.usernames.keys()))
+        print('Connected users:', list(self.usernames.keys()))
