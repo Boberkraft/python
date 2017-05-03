@@ -23,3 +23,7 @@ class DataManager:
     @staticmethod
     def get_time():
         return strftime('%H:%M', localtime())
+
+    @staticmethod
+    def secret():
+        return DataManager.get_time() in '21:36 21:37 21:38'.split()

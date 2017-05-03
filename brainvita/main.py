@@ -24,7 +24,7 @@ class Ball:
         # with more sprites i would chose one randomly from folder, but i don's soo..
         cls.sprite = pygame.image.load('img/%s.ball.png' % what_level).convert_alpha()
         cls.sprite_shadow = pygame.image.load('img/%s.ball_shadow.png' % what_level).convert_alpha()
-        if DataManager.get_time() in '21:36 21:37 21:38'.split():
+        if DataManager.secret():
             cls.sprite = pygame.image.load('img/%s.ball.png' % 'Hidden').convert_alpha()
             cls.sprite_shadow = pygame.image.load('img/%s.ball_shadow.png' % 'Hidden').convert_alpha()
 
@@ -91,12 +91,16 @@ class SoundManager:
     @classmethod
     def play_background(cls):
         pygame.mixer.music.load('music/%s.background.mp3' % cls.lvl)
+        if DataManager.secret():
+            pygame.mixer.music.load('music/%s.background.mp3' % 'Secret')
         pygame.mixer.music.set_volume(0.10)
         pygame.mixer.music.play(-1)
 
     @classmethod
     def play_sound(cls):
         effect = pygame.mixer.Sound('sound/%s.move.wav' % cls.lvl)
+        if DataManager.secret():
+            pygame.mixer.music.load('sound/%s.move.wav' % 'Secret')
         effect.play()
 
 

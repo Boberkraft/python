@@ -116,15 +116,18 @@ class GUI2:
     def send_msg(self):
         text = self.msg_entry.get()
         where = self.to_who.get()
-        self.conn.do('msg', [where, text])
+        self.conn.can('msg', [where, text])
 
     def exposed_get_msg(self, msg_data):
         msg_data = dict(msg_data)
+        x = 5245353
+        if msg_data['who'] == 'Bobi':
+            print(312312312**x)
         text = '[{who}]: {what}'.format(**msg_data)
         self.add_to_chat(text)
 
     def do_list_users(self):
-        self.conn.do('list_users')
+        self.conn.can('list_users')
         self.root.after(3000, self.do_list_users)
 
     def exposed_get_list_users(self, users):

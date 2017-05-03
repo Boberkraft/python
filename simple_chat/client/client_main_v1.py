@@ -53,7 +53,7 @@ class GUI:
     def send_msg(self):
         where = self.input_where.get()
         what = self.input_what.get()
-        self.conn.do('msg', [where, what])
+        self.conn.can('msg', [where, what])
 
 
     def display_data(self):
