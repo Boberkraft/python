@@ -1,0 +1,7 @@
+{
+"sad": "sad.jpg",
+"happy": "happy.jpg",
+"angry": ["zenek.jpg", "angry.jpg"],
+"prorok": "prorok.jpg", 
+"dog": "dog.jpg"
+}

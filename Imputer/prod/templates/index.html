@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Meme</title>
+	<link rel="stylesheet" type="text/css" href="bulma.css">
+	<link rel="stylesheet" type="text/css" href="foundation.css">
+	<style type="text/css">
+
+	.column_s {
+	    height: 100%;  /*allows both columns to span the full height of the browser window*/
+	    display: flex;
+	    flex-direction: column;  /*places the left and right headers above the bottom content*/
+	}
+
+	#left_s {
+	    flex-shrink: 0;  /*makes sure that content is not cut off in a smaller browser window*/
+	}
+
+	.top-left_s {
+	    flex-shink: 0;
+	}
+
+	.top-right_s {
+	    flex-shrink: 0;
+	    display: inline-flex;
+	}
+
+
+	.bottom_s {
+	    flex-grow: 1;  /*ensures that the container will take up the full height of the parent container*/
+	    overflow-y: auto;  /*adds scroll to this container*/
+	}
+	body{
+		display: flex;
+	}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<nav class="nav has-shadow">
+			<div class="container">
+				<div class="nav-left">
+					<a class="nav-item">
+						<img src="http://bulma.io/images/bulma-logo.png" alt="Bulma logo">
+					</a>
+					<a class="nav-item is-tab is-hidden-mobile is-active">Menu</a>
+					<a class="nav-item is-tab is-hidden-mobile">Dodaj</a>
+					<a class="nav-item is-tab is-hidden-mobile">Udostepnij</a>
+					<a class="nav-item is-tab is-hidden-mobile">Kontakt</a>
+				</div>
+				<span class="nav-toggle">
+					<span></span>
+					<span></span>
+					<span></span>
+				</span>
+				<div class="nav-right nav-menu">
+					<a class="nav-item is-tab is-hidden-tablet is-active">Menu</a>
+					<a class="nav-item is-tab is-hidden-tablet">Dodaj</a>
+					<a class="nav-item is-tab is-hidden-tablet">Udostepnij</a>
+					<a class="nav-item is-tab is-hidden-tablet">About</a>
+					<a class="nav-item is-tab">
+						<figure class="image is-16x16" style="margin-right: 8px;">
+							<img src="http://bulma.io/images/jgthms.png">
+						</figure>
+						Profil
+					</a>
+					<a class="nav-item is-tab">Wyloguj się</a>
+				</div>
+			</div>
+		</nav>
+
+	<div class="columns">
+		<div class="column">
+			<div class="card">
+				<div class="card-image">
+					<figure class="image is-4by3">
+						<img src="http://bulma.io/images/placeholders/1280x960.png" alt="Image">
+					</figure>
+				</div>
+				<div class="card-content">
+					<div class="media">
+						<div class="media-content">
+							<div class="block">
+								<span class="tag is-danger">
+								Zenek
+								</span>
+								<span class="tag is-danger">
+								Pies
+								</span>
+							</div>
+							<div class="block">
+								<span class="tag is-info">
+									Wesoly
+								</span>
+								<span class="tag is-info">
+									Niebezpieczny
+								</span>
+								<span class="tag is-info">
+									Smierc
+								</span>
+								<span class="tag is-info">
+									Zlo
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<footer class="card-footer">
+					<a class="card-footer-item">Edytuj</a>
+					<a class="card-footer-item">Zaznacz</a>
+					<a class="card-footer-item">Usuń</a>
+				</footer>
+			</div>
+		</div>
+		<div class="column">
+			<div class="card">
+				<div class="card-image">
+					<figure class="image is-4by3">
+						<img src="http://bulma.io/images/placeholders/1280x960.png" alt="Image">
+					</figure>
+				</div>
+				<div class="card-content">
+					<div class="media">
+						<div class="media-content">
+							<div class="block">
+								<span class="tag is-danger">
+								Zenek
+								</span>
+								<span class="tag is-danger">
+								Pies
+								</span>
+							</div>
+							<div class="block">
+								<span class="tag is-info">
+									Wesoly
+								</span>
+								<span class="tag is-info">
+									Niebezpieczny
+								</span>
+								<span class="tag is-info">
+									Smierc
+								</span>
+								<span class="tag is-info">
+									Zlo
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<footer class="card-footer">
+					<a class="card-footer-item">Edytuj</a>
+					<a class="card-footer-item">Zaznacz</a>
+					<a class="card-footer-item">Usuń</a>
+				</footer>
+			</div>
+		</div>
+
+		<div class="column">
+			<div class="card">
+				<div class="card-image">
+					<figure class="image is-4by3">
+						<img src="http://bulma.io/images/placeholders/1280x960.png" alt="Image">
+					</figure>
+				</div>
+				<div class="card-content">
+					<div class="media">
+						<div class="media-content">
+							<div class="block">
+								<span class="tag is-danger">
+									Zenek
+									<button class="delete "></button>
+								</span>
+								<span class="tag is-danger">
+									Pies
+									<button class="delete "></button>
+								</span>
+							</div>
+							<div class="field">
+								<p class="control">
+									<input class="input is-danger" type="text" placeholder="Primary input">
+								</p>
+							</div>
+							<div class="block">
+								<span class="tag is-info">
+									Wesoly
+									<button class="delete is-small"></button>
+								</span>
+								<span class="tag is-info">
+									Niebezpieczny
+									<button class="delete is-small"></button>
+								</span>
+								<span class="tag is-info">
+									Smierc
+									<button class="delete is-small"></button>
+								</span>
+								<span class="tag is-info">
+									Zlo
+									<button class="delete is-small"></button>
+								</span>
+							</div>
+							<div class="field">
+								<p class="control">
+									<input class="input is-info" type="text" placeholder="Primary input">
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<footer class="card-footer">
+					<a class="card-footer-item">Edytuj</a>
+					<a class="card-footer-item">Zaznacz</a>
+					<a class="card-footer-item">Usuń</a>
+				</footer>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
+
