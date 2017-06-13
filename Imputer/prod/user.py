@@ -16,7 +16,7 @@ class User:
 
     @staticmethod
     def select(id=None):
-        exist = Database.session.query(Database.Selected).filter_by(image_id=id)
+        exist = Database.session.query(Database.Selected).filter_by(image_id=id).first()
         if not exist:
             if id is None:
                 pass
@@ -31,6 +31,10 @@ class User:
     def delete_selected():
         Database.session.query(Database.Image).delete()
         Database.commit()
+
+    @staticmethod
+    def get_selected():
+        return Database.session.query(Database.Image).join(Database.Selected)
 
     @staticmethod
     def add_uploaded(id, tags):

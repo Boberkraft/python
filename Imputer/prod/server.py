@@ -43,10 +43,9 @@ def upload_files():
 
                 # prepere to select
                 images.append(dict(name=random_filename, original_name=original_filename, file=random_filename))
-    ids = User.upload(images)
-    for i in range(len(files_added)):
-        added.append([ids[i], files_added[i], []])
-    return {'how_many': len(added), 'data': render_template('card.html', files=added, static='/uploads/')}
+    User.upload(images)
+    images = User.get_uploaded()
+    return render_template('card.html', images=images, static='/uploads/')
 
 
 def generate_thumb(path):
@@ -107,23 +106,34 @@ def get_files(path):
 
 @app.route('/add/')
 def dodaj():
-
     images = User.get_uploaded()
-    print('*'*10)
-    [print(img.tags) for img in images]
-    print('*' * 10)
-    out = [[img.id, img.file, [tag.name for tag in img.tags]] for img in images]
-    return render_template('add.html', files=out, static='/uploads/')
+    images = [img for img in images]
+
+    return render_template('add.html', images=images, static='/uploads/')
+
+@app.route('/selected/')
+def selected_page():
+    images = User.get_selected()
+    images = [img for img in images]
+
+    return render_template('selected.html', images=images, static='/uploads/')
+
+@app.route('/upload/')
+def upload_page():
+
+    return render_template('selected.html', images=[], static='/uploads/')
+
+@app.route('/contact/')
+def contact_page():
+
+    return render_template('selected.html', images=[], static='/uploads/')
+
 
 @app.route('/')
 def main():
-
     images = User.get_images()
-    print('*'*10)
-    [print(img.name) for img in images]
-    print('*' * 10)
-    out = [[img.id, img.file,  [tag.name for tag in img.tags]] for img in images]
-    return render_template('index.html', files=out, static='/uploads/')
+    images = [img for img in images]
+    return render_template('index.html', images=images, static='/uploads/')
 app.run()
 
 

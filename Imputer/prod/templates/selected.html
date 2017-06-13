@@ -1,0 +1,62 @@
+{% set active_page = "/selected/" %}
+
+{%extends "base.html" %}
+{% block content %}
+<h1 class="title">Zaznaczone</h1>
+<h2 class="subtitle">
+    <p class="is-large">Znajdują się tutaj twoje zaznaczaone obrazki. Tutaj możesz edytować je wszystkie na raz.</p>
+</h2>
+
+
+<div class="columns">
+    <div class="columns">
+        <div class="column">
+            Zarządzanie wszystkimi zaznaczonymi:
+        </div>
+    </div>
+</div>
+<div class="columns">
+    <div class="column">
+        <div class="columns">
+            <div class="column">
+                <div class="field">
+                    <p class="control">
+                        <input class="input is-info" type="text" id="tags_all_input" placeholder="Tagi poboczne">
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="columns">
+             <div class="column has-text-centered">
+                  <a class="button is-primary" id="tags_all">Dodaj globalne tagi</a>
+             </div>
+         </div>
+    </div>
+    <div class="column is-2">
+
+         <div class="columns">
+             <div class="column has-text-centered">
+                  <a class="button is-warning" id="save_all">Dodaj wszystkie obrazki</a>
+             </div>
+         </div>
+         <div class="columns">
+             <div class="column has-text-centered">
+                  <a class="button is-danger" id="delete_all">Usuń wszystkie obrazki</a>
+             </div>
+         </div>
+    </div>
+</div>
+
+<div class="hide" id="edit_menu_local">
+    <div class="columns">
+        <div class="column is-one-quarter"></div>
+        <div class="column">
+            <p>
+                Pamiętaj, że możesz przypisać wszystkim obrazą wspólny tak klikająć zakładkę `zaznaczone`.
+            </p>
+        </div>
+        <div class="column is-one-quarter"></div>
+    </div>
+</div>
+<div class="empty"></div>
+{% endblock %}}

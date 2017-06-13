@@ -22,7 +22,7 @@ class Selected(Base):
 
     id = Column(Integer, primary_key=True)
     image_id = Column(Integer, ForeignKey('images.id'))
-    image = relationship('Image', backref=backref('image', uselist=False))
+    image = relationship('Image', backref=backref('selected', uselist=False))
 
 
 class Uploaded(Base):
@@ -60,7 +60,7 @@ class Tag(Base):
     name = Column(String)
 
     def __repr__(self):
-        return '<Tag(name={})>'.format(self.name)
+        return '{}'.format(self.name)
 
 
 Base.metadata.create_all(engine)

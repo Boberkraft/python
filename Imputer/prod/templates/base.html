@@ -63,7 +63,7 @@
 					<a class="nav-item is-tab is-hidden-tablet">Dodaj</a>
 					<a class="nav-item is-tab is-hidden-tablet">Udostepnij</a>
 					<a class="nav-item is-tab is-hidden-tablet">About</a>
-                    <a class="nav-item is-tab">Zaznaczone!</a>
+                    <a href="/selected/" class="nav-item is-tab">Zaznaczone!</a>
 					<!--<a class="nav-item is-tab">-->
 						<!--<figure class="image is-16x16" style="margin-right: 8px;">-->
 							<!--<img src="http://bulma.io/images/jgthms.png">-->
@@ -82,7 +82,7 @@
 		<div class="container">
 			{% block content %}
 			{% endblock %}
-            {% if files is defined %}
+            {% if images is defined %}
                 <output>
                     {% include "card.html" %}
                 </output>
@@ -96,7 +96,7 @@
 				loaded_images = loaded_images + what;
 				if (loaded_images <= 0)
 				{
-				    location.reload(true);
+//				    location.reload(true);
 				}
 				console.log('Loaded images: ' + loaded_images);
             }
@@ -205,6 +205,7 @@ var formData = new FormData($("#upload-file")[0]);
         			send_data(data, 'change_state/');
         			change_loaded_images(-1);
 			   })
+
                });
 		</script>
 	<script>
