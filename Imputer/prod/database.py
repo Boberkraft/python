@@ -30,7 +30,7 @@ class Uploaded(Base):
 
     id = Column(Integer, primary_key=True)
     image_id = Column(Integer, ForeignKey('images.id'))
-    image =  relationship('Image', backref=backref('new', uselist=False))
+    image = relationship('Image', backref=backref('new', uselist=False))
 
 
 

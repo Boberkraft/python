@@ -1,0 +1,252 @@
+{% set tabs = [
+			('/', 'Menu'),
+			('/add/', 'Dodaj'),
+			('/upload/', 'Udostępnij'),
+			('/contact/', 'Kontakt')]
+%}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dodaj</title>
+	<link rel="stylesheet" type="text/css" href="/bulma.css">
+
+	<style type="text/css">
+		.nav { position: fixed !important; top: 0; left: 0; right: 0; }
+	</style>
+	<style type="text/css">
+		.empty
+		{
+			height: 52px;
+		}
+		.inputfile
+		{
+			width: 0.1px;
+			height: 0.1px;
+			opacity: 0;
+			overflow: hidden;
+			position: absolute;
+			z-index: -1;
+		}
+		.selected
+		{
+			background-color: #00d1b2;
+		}
+
+	</style>
+	<script src="/jquery.js"></script>
+	<script type="text/javascript">
+
+	</script>
+</head>
+<body>
+	<body class="container">
+		<nav class="nav has-shadow">
+			<div class="container">
+				<div class="nav-left">
+					<a class="nav-item" href="/">
+						<img src="/logo.png" alt="Evinser logo">
+					</a>
+					{% for short, name in tabs %}
+						<a href="{{ short }}"
+						   class="nav-item is-tab is-hidden-mobile {% if short == active_page %} is-active {% endif %}">
+							{{name}}
+						</a>
+					{% endfor %}
+				</div>
+				<span class="nav-toggle">
+					<span></span>
+					<span></span>
+					<span></span>
+				</span>
+				<div class="nav-right nav-menu">
+					<a class="nav-item is-tab is-hidden-tablet is-active">Menu</a>
+					<a class="nav-item is-tab is-hidden-tablet">Dodaj</a>
+					<a class="nav-item is-tab is-hidden-tablet">Udostepnij</a>
+					<a class="nav-item is-tab is-hidden-tablet">About</a>
+                    <a class="nav-item is-tab">Zaznaczone!</a>
+					<!--<a class="nav-item is-tab">-->
+						<!--<figure class="image is-16x16" style="margin-right: 8px;">-->
+							<!--<img src="http://bulma.io/images/jgthms.png">-->
+						<!--</figure>-->
+						<!--Profil-->
+					<!--</a>-->
+				</div>
+			</div>
+		</nav>
+        <div class="tabs is-small">
+
+	</div>
+	<div class="empty"></div>
+
+	<section class="section">
+		<div class="container">
+			{% block content %}
+			{% endblock %}
+            {% if files is defined %}
+                <output>
+                    {% include "card.html" %}
+                </output>
+            {% endif %}
+
+		</div>
+	</section>
+		<script>
+			var loaded_images = 0;
+			function change_loaded_images(what) {
+				loaded_images = loaded_images + what;
+				if (loaded_images <= 0)
+				{
+				    location.reload(true);
+				}
+				console.log('Loaded images: ' + loaded_images);
+            }
+		</script>
+	<script type="text/javascript">
+		var inputs = document.querySelectorAll( '.inputfile' );
+		Array.prototype.forEach.call( inputs, function( input )
+		{
+			var label	 = input.nextElementSibling,
+				labelVal = label.innerHTML;
+
+			input.addEventListener( 'change', function( e )
+			{
+
+				var fileName = '';
+				if( this.files && this.files.length > 1 )
+					fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+				else
+					fileName = e.target.value.split( '\\' ).pop();
+				if( fileName )
+				{
+					var el = document.getElementById( 'desc' );
+					label.parentElement.classList.add('is-primary');
+					label.innerHTML = fileName;
+				}
+				else
+					label.innerHTML = labelVal;
+			});
+		});
+	</script>
+        <script>
+            function send_data(data, site) {
+        $.ajax({
+            url: "http://localhost:5000/" + site,
+            type: "POST",
+            processData: false,
+            cache: false,
+            data: JSON.stringify(data, null, '\t'),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(result) {
+                console.log(result);
+            }
+        });
+
+            }
+        </script>
+
+	<script type="text/javascript">
+
+   $('#attachments').change(function(){
+var formData = new FormData($("#upload-file")[0]);
+        $.ajax({
+            url: "http://localhost:5000/upload_files/",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function(result){
+				console.log('new images');
+				$('output').append(result);
+				$('#edit_menu_online').addClass('hide');
+				$('#edit_menu_local').removeClass('hide');
+				$('#attachments_button').addClass('hide');
+           }
+        });
+        });
+	</script>
+    <script>
+    $('output').on('click', '.delete-bt', function () {
+        $(this).parent().parent().addClass('hide');
+        var data = {'id': $(this).parent().attr('id'), 'action':'delete', 'mode': 'selected'};
+        send_data(data, 'change_state/');
+        change_loaded_images(-1);
+    })
+
+    $('output').on('click', '.save-bt', function () {
+        var first = $(this).parent().parent().find(".tags-1").val();
+        var tags = first ;
+        $(this).parent().parent().html('Added with tags: ' + JSON.stringify(tags) + '<br>Undo') ;
+        var data = {'id': $(this).parent().attr('id'), 'action':'add', 'mode': 'selected', 'tags': tags};
+        send_data(data, 'change_state/');
+        change_loaded_images(-1);
+    })
+    </script>
+		<script>
+			$('#save_all').click(function () {
+			    $('.save-bt').each(function () {
+				  var first = $(this).parent().parent().find(".tags-1").val();
+				var second = ',';
+				var tags = first ;
+				$(this).parent().parent().html('Added with tags: ' + JSON.stringify(tags) + '<br>Undo') ;
+				var data = {'id': $(this).parent().attr('id'), 'action':'add', 'mode': 'selected', 'tags': tags};
+				send_data(data, 'change_state/');
+				change_loaded_images(-1);
+            });
+
+            });
+
+		</script>
+		<script>
+			$('#delete_all').click(function () {
+			   $('.delete-bt').each(function () {
+                $(this).parent().parent().addClass('hide');
+        			var data = {'id': $(this).parent().attr('id'), 'action':'delete', 'mode': 'selected'};
+        			send_data(data, 'change_state/');
+        			change_loaded_images(-1);
+			   })
+               });
+		</script>
+	<script>
+		$('#tags_all').click(function () {
+		    var tags = $('#tags_all_input').val();
+		    $('.tags-1').each(function () {
+		        var values = $(this).val();
+		        if (values.length == 0)
+		        {var sep = '';}
+		        else
+				{var sep = ', ';}
+
+		        values = tags + sep + values + ' ';
+		        $(this).val(values);
+			});
+
+        });
+
+	</script>
+	<script>
+		$('output').on('click', '.select-bt', function () {
+		    var selected = $(this).attr("triggered");
+			console.log(selected);
+		    if (selected == 0)
+		    {
+		        var data = {'id': $(this).parent().attr('id'), 'action':'select', 'mode': 'selected'};
+				send_data(data, 'change_state/');
+		        $(this).parent().parent().parent().addClass('selected');
+        		$(this).html('Odznacz');
+				$(this).attr('triggered', '1');
+			}
+			else
+			{
+			    var data = {'id': $(this).parent().attr('id'), 'action':'unselect', 'mode': 'selected'};
+				send_data(data, 'change_state/')
+		        $(this).parent().parent().parent().removeClass('selected');
+        		$(this).html('Zaznacz');
+        		$(this).attr('triggered', '0');
+			}
+
+    })
+
+	</script>
+   </body>
+</html>

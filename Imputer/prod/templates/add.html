@@ -1,0 +1,112 @@
+{% set active_page = "/add/" %}
+
+{%extends "base.html" %}
+{% block content %}
+<h1 class="title">Dodawanie</h1>
+<h2 class="subtitle">
+    <p class="is-large">Aby dodać nowe obrazki, możesz przeszukać bazy stworzone
+        już przez innych użytkowników, bądź dodać je z komputera. Do podglądu obrazki mają zmiejszoną jakość</p>
+    {% if files|length == 0 %}
+
+    <form id="upload-file" method="post" enctype="multipart/form-data">
+        <p id="attachments_button" class="has-text-centered">
+            <label class="button">
+
+                <input id="attachments" type="file" name="files[]" accept="image/*" class="inputfile"  data-multiple-caption="{count} obrazki wybrane" multiple />
+                <span id="desc">Wybierz z dysku</span>
+
+            </label>
+        </p>
+    </form>
+    {% endif %}
+</h2>
+
+{% if files is not defined %}
+<div>
+    <nav class="level" id="edit_menu_online">
+    <!-- Left side -->
+        <div class="level-left">
+            <div class="level-item">
+                <p class="subtitle is-5">
+                    <strong>123</strong> Obrazków
+                </p>
+            </div>
+            <div class="level-item">
+                <div class="field has-addons">
+                    <p class="control">
+                        <input class="input" type="text" placeholder="Poszukaj obrazków">
+                    </p>
+                    <p class="control">
+                        <button class="button">
+                            Szukaj
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    <!-- Right side -->
+        <div class="level-right">
+            <p class="level-item"><a class="button is-primary">Pojedyńcze obrazki</a></p>
+            <p class="level-item"><a class="button">Całe bazy</a></p>
+            <p class="level-item"><a class="button">Po ID bazy</a></p>
+
+        </div>
+    </nav>
+</div>
+{% else %}
+
+<div class="columns">
+    <div class="columns">
+        <div class="column">
+            Zarządzanie wszystkimi zaznaczonymi:
+        </div>
+    </div>
+</div>
+<div class="columns">
+    <div class="column">
+        <div class="columns">
+            <div class="column">
+                <div class="field">
+                    <p class="control">
+                        <input class="input is-info" type="text" id="tags_all_input" placeholder="Tagi poboczne">
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="columns">
+             <div class="column has-text-centered">
+                  <a class="button is-primary" id="tags_all">Dodaj globalne tagi</a>
+             </div>
+         </div>
+    </div>
+    <div class="column is-2">
+
+         <div class="columns">
+             <div class="column has-text-centered">
+                  <a class="button is-warning" id="save_all">Dodaj wszystkie obrazki</a>
+             </div>
+         </div>
+         <div class="columns">
+             <div class="column has-text-centered">
+                  <a class="button is-danger" id="delete_all">Usuń wszystkie obrazki</a>
+             </div>
+         </div>
+    </div>
+</div>
+
+
+{% endif %}
+
+<div class="hide" id="edit_menu_local">
+    <div class="columns">
+        <div class="column is-one-quarter"></div>
+        <div class="column">
+            <p>
+                Pamiętaj, że możesz przypisać wszystkim obrazą wspólny tak klikająć zakładkę `zaznaczone`.
+            </p>
+        </div>
+        <div class="column is-one-quarter"></div>
+    </div>
+</div>
+<div class="empty"></div>
+{% endblock %}}

@@ -1,5 +1,6 @@
 
-{% for id, file in files %}
+{% for id, file, tags in files %}
+
     {% if loop.index0 % 4 == 0 %}
         <div class="columns">
     {% endif %}
@@ -17,24 +18,61 @@
             <div class="card-content">
                 <div class="media">
                     <div class="media-content">
-                        <div class="field">
-                            <p class="control">
-                                <input class="input is-danger" type="text" placeholder="Primary input">
-                            </p>
+                        <div id="hiden_form" class="{% if active_page == '/' %}
+                                    hide
+                                    {% endif %}
+                                 ">
+
+                            <div class="field">
+                                <p class="control">
+                                    <input class="input is-danger tags-1" type="text" placeholder="Tagi główne"
+                                           values="{% for tag in tags%} tag, {% endfor %}">
+                                </p>
+                            </div>
+                            <!-- <div class="field">
+                                <p class="control">
+                                    <input class="input is-info tags-2" type="text" placeholder="Tagi poboczne">
+                                </p>
+                            </div> -->
                         </div>
-                        <div class="field">
-                            <p class="control">
-                                <input class="input is-info" type="text" placeholder="Primary input">
-                            </p>
+
+                        <div class="hiden_tags" id="{% if active_site != '/' %}
+                                    hide
+                                    {% endif %}
+                                 ">
+                            <div class="block">
+                                {% for tag in tags %}
+                                <span class="tag is-info">
+                                    {{ tag }}
+                                </span>
+                                {% endfor %}
+                            </div>
+
                         </div>
+
                     </div>
                 </div>
             </div>
-            <footer class="card-footer" id="{{ file }}">
-                <a class="card-footer-item save-bt">Zapisz</a>
-                <a class="card-footer-item select-bt">Odznacz</a>
+            <footer class="card-footer" id="{{ id }}">
+                {% if active_page != '/' %}
+                    <a class="card-footer-item save-bt">Zapisz</a>
+                {% endif %}
+                {% if active_page == '/' %}
+                    <a class="card-footer-item edit-bt">Edytuj</a>
+                {% endif %}
+                {% if selected is defined %}
+                    <a triggered="1" class="card-footer-item select-bt">Odznacz</a>
+                {% els %}
+                    <a triggered="0" class="card-footer-item select-bt">Zaznacz</a>
+                {% endif %}
                 <a class="card-footer-item delete-bt" >Usuń</a>
             </footer>
+            <script>
+                $(document).ready(function () {
+                    change_loaded_images(1);
+                });
+
+            </script>
         </div>
     </div>
     {% if loop.index0 % 4 == 3 or loop.last %}

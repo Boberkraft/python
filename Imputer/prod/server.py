@@ -13,8 +13,11 @@ app = Flask(__name__, static_folder='files', static_url_path='')
 CORS(app)
 ALLOWED_EXTENSION = set('text pdf png jpg jpeg gif'.split())
 ALLOWED_MODE = ('selected', 'database')
-ALLOWED_STATUS = ('add', 'select', 'delete')
+ALLOWED_ACTION = ('add', 'select', 'delete', 'unselect')
 UPLOAD_FOLDER = 'uploads/'
+IMAGE_SIZE_QUALITY = 2
+###
+qlty = IMAGE_SIZE_QUALITY
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -42,14 +45,13 @@ def upload_files():
                 images.append(dict(name=random_filename, original_name=original_filename, file=random_filename))
     ids = User.upload(images)
     for i in range(len(files_added)):
-        added.append([ids[i], files_added[i]])
-
-    return render_template('card.html', files=added, static='/uploads/')
+        added.append([ids[i], files_added[i], []])
+    return {'how_many': len(added), 'data': render_template('card.html', files=added, static='/uploads/')}
 
 
 def generate_thumb(path):
     image = Image.open(path)
-    image.thumbnail((400*3, 300*3))
+    image.thumbnail((400*qlty, 300*qlty))
     return image
 
 @app.route('/change_state/', methods=['GET', 'POST'])
@@ -58,27 +60,31 @@ def change():
     #         'status': 'xx',
     #         xx}
     msg = request.json
+    print('New Change state:', msg)
     if msg:
         mode, action = msg['mode'], msg['action']
-        if mode not in ALLOWED_MODE or action not in ALLOWED_STATUS:
-            raise ValueError('Not allowed mode or status!')
-        if mode is 'selected':
-            if action is 'select':
-                images = msg.get('images', None)
-                User.select(images)
-            elif action is 'delete':
+        if mode not in ALLOWED_MODE or action not in ALLOWED_ACTION:
+            raise ValueError('Not allowed mode or action!')
+        if mode == 'selected':
+            if action == 'select':
+                User.select(msg['id'])
+            elif action == 'unselect':
+                User.unselect(msg['id'])
+            elif action == 'add':
+                User.add_uploaded(msg['id'], msg['tags'])
+            elif action == 'delete':
                 id = msg.get('id', None)
                 User.delete(id)
 
-        elif mode is 'database':
-            if action is 'add':
+        elif mode == 'database':
+            if action == 'add':
                 User.add_selected()
-            if action is 'delete':
+            if action == 'delete':
                 User.delete_selected()
         else:
-            print('Undefinied status!')
-        return 'ok'
-
+            print('Undefinied mode!')
+        return str({'status': 'ok'})
+    return str({'status': 'failed'})
 @app.route('/view/')
 def view_images():
     return 'wyswietlasz'
@@ -90,32 +96,34 @@ def get_files(path):
     file_path = os.path.join(up_folder, secure_filename(path))
     image = generate_thumb(file_path)
     img_w, img_h = image.size
-    background = Image.new('RGBA', (400*3, 300*3), (255,255,255,255))
+    background = Image.new('RGBA', (400*qlty, 300*qlty), (255,255,255,255))
     bg_w, bg_h = background.size
     offset = (bg_w - img_w)//2, (bg_h - img_h)//2
     background.paste(image, offset)
     fake_file = BytesIO()
     background.save(fake_file, 'PNG')
     fake_file.seek(0)
-
     return send_file(fake_file, mimetype='image/png')
 
 @app.route('/add/')
 def dodaj():
 
-    f = open('dodaj.html')
-    data = f.read()
-    f.close()
-    return data
+    images = User.get_uploaded()
+    print('*'*10)
+    [print(img.tags) for img in images]
+    print('*' * 10)
+    out = [[img.id, img.file, [tag.name for tag in img.tags]] for img in images]
+    return render_template('add.html', files=out, static='/uploads/')
 
 @app.route('/')
 def main():
 
     images = User.get_images()
     print('*'*10)
-    for img in images:
-        print('Geting image', img)
-    return render_template('index.html')
+    [print(img.name) for img in images]
+    print('*' * 10)
+    out = [[img.id, img.file,  [tag.name for tag in img.tags]] for img in images]
+    return render_template('index.html', files=out, static='/uploads/')
 app.run()
 
 
