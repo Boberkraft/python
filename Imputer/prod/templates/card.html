@@ -1,4 +1,10 @@
-
+{% if active_page != '/' %}
+    {% set save = ''  %}
+    {% set edit = 'hide' %}
+{% else %}
+    {% set save = 'hide' %}
+    {% set edit = '' %}
+{% endif %}
 {% for image in images %}
 
     {% if loop.index0 % 4 == 0 %}
@@ -18,15 +24,12 @@
             <div class="card-content">
                 <div class="media">
                     <div class="media-content">
-                        <div id="hiden_form" class="{% if active_page == '/' %}
-                                    hide
-                                    {% endif %}
-                                 ">
+                        <div class="hidden_form {% if active_page == '/' %} hide {% endif %} ">
 
                             <div class="field">
                                 <p class="control">
                                     <input class="input is-danger tags-1" type="text" placeholder="Tagi główne"
-                                           values="{% for tag in image.tags%} tag, {% endfor %}">
+                                           value="{% for tag in image.tags %} {{ tag }}, {% endfor %}">
                                 </p>
                             </div>
                             <!-- <div class="field">
@@ -36,10 +39,7 @@
                             </div> -->
                         </div>
 
-                        <div class="hidden_tags" id="{% if active_site == '/add/' %}
-                                    hide
-                                    {% endif %}
-                                 ">
+                        <div class="hidden_tags {% if active_page != '/' %} hide {% endif %} ">
                             <div class="block">
                                 {% for tag in image.tags %}
                                 <span class="tag is-info">
@@ -54,12 +54,14 @@
                 </div>
             </div>
             <footer class="card-footer" id="{{ image.id }}">
-                {% if active_page != '/' %}
-                    <a class="card-footer-item save-bt">Zapisz</a>
-                {% endif %}
-                {% if active_page == '/' %}
-                    <a class="card-footer-item edit-bt">Edytuj</a>
-                {% endif %}
+
+                <a class="card-footer-item save-bt {{ save }}">Zapisz</a>
+
+
+
+                <a class="card-footer-item edit-bt {{ edit }}">Edytuj</a>
+
+
                 {% if image.selected is none %}
                     <a triggered="0" class="card-footer-item select-bt">Zaznacz</a>
                 {% else %}

@@ -38,8 +38,14 @@ class User:
 
     @staticmethod
     def add_uploaded(id, tags):
-        Database.session.query(Database.Uploaded).filter_by(image_id=id).delete()
-        img = Database.session.query(Database.Image).filter_by(id=id).first()
+        if Database.session.query(Database.Uploaded).filter_by(image_id=id).exist():
+            Database.session.query(Database.Uploaded).filter_by(image_id=id).delete()
+            img = Database.session.query(Database.Image).filter_by(id=id).first()
+        else:
+            print('Deleting tags.')
+            # this image is already added. Lets change its tags.
+            img = Database.session.query(Database.Image).filter_by(id=id).first()
+            img.tags.delete()
         print(img)
         for tag in tags.split(','):
             tag = tag.strip().lower()
@@ -52,6 +58,9 @@ class User:
                 print('SELECTED TAG!!!!!!!!!!!',database_tag)
                 img.tags.append(database_tag)
         Database.commit()
+
+
+
 
     @staticmethod
     def get_uploaded():
