@@ -121,13 +121,28 @@ def selected_page():
 @app.route('/upload/')
 def upload_page():
 
-    return render_template('selected.html', images=[], static='/uploads/')
+    return render_template('upload.html', images=[], static='/uploads/')
 
-@app.route('/contact/')
+@app.route('/update/')
 def contact_page():
+    news = news_page()
+    return render_template('update.html', images=[], news=news, static='/uploads/')
 
-    return render_template('selected.html', images=[], static='/uploads/')
-
+@app.route('/news/')
+def news_page():
+    news = [
+            {'date': 'czas',
+             'content': 'Chyba teraz wszystko działa',
+             'author': 'Andrzej Bisewski',
+             'image': 'https://avatars3.githubusercontent.com/u/16669574',
+             'github': '@Boberkraft'},
+        {'date': 'czas',
+         'content': 'Hello my first post',
+         'author': 'Andrzej Bisewski',
+         'image': 'https://avatars3.githubusercontent.com/u/16669574',
+         'github': '@Boberkraft'}
+            ]
+    return news
 
 @app.route('/')
 def main():

@@ -2,7 +2,7 @@
 			('/', 'Menu'),
 			('/add/', 'Dodaj'),
 			('/upload/', 'Udostępnij'),
-			('/contact/', 'Kontakt')]
+			('/update/', 'Aktualizacje')]
 %}
 <!DOCTYPE html>
 <html>
@@ -30,6 +30,7 @@
 		.selected
 		{
 			background-color: #00d1b2;
+			box-shadow: 0 0px 10px 0 #00d1b2;
 		}
 
 	</style>
@@ -82,7 +83,8 @@
 		<div class="container">
 			{% block content %}
 			{% endblock %}
-            {% if images is defined %}
+			<div class="empty"></div>
+			{% if images is defined %}
                 <output>
                     {% include "card.html" %}
                 </output>

@@ -11,7 +11,7 @@ class User:
             Database.session.query(Database.Selected).delete()
         else:
             # delete specified id
-            Database.session.query(Database.Selected).filter_by(id=id).delete()
+            Database.session.query(Database.Selected).filter_by(image_id=id).delete()
         Database.commit()
 
     @staticmethod
