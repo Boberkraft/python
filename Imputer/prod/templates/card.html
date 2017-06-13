@@ -28,7 +28,7 @@
 
                             <div class="field">
                                 <p class="control">
-                                    <input class="input is-danger tags-1" type="text" placeholder="Tagi główne"
+                                    <input class="input is-danger tags-1" type="text" placeholder="smutek, zal, zlosc"
                                            value="{% for tag in image.tags %} {{ tag }}, {% endfor %}">
                                 </p>
                             </div>
@@ -42,7 +42,7 @@
                         <div class="hidden_tags {% if active_page != '/' %} hide {% endif %} ">
                             <div class="block">
                                 {% for tag in image.tags %}
-                                <span class="tag is-info">
+                                <span class="tag is-primary">
                                     {{ tag }}
                                 </span>
                                 {% endfor %}

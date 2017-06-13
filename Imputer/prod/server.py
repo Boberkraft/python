@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 from werkzeug.utils import secure_filename
 from PIL import Image, ImageOps
 from io import BytesIO
+import threading
 import os
 import uuid
 
@@ -144,6 +145,14 @@ def news_page():
             ]
     return news
 
+@app.route('/get_image/<tag>')
+def get_image_page(tag):
+    print('GOT TAG', tag.strip())
+    path = User.get_by_tag(tag)
+    if path:
+        return path
+    else:
+        return ''
 @app.route('/')
 def main():
     images = User.get_images()

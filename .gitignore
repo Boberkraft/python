@@ -4,3 +4,9 @@ brainvita/music/emergency/
 *.db
 
 brainvita/img/templates/
+
+*.pyc
+
+Imputer/prod/uploads/
+
+Imputer/\.idea/

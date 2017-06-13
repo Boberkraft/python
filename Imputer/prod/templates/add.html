@@ -21,14 +21,14 @@
     {% endif %}
 </h2>
 
-{% if images is not defined %}
+
 <div class="tile is-ancestor">
   <div class="tile is-vertical is-parent">
     <div class="tile is-child">
         <p class="title">Dodaj wszędzie tagi:</p>
         <div class="field">
             <p class="control">
-                <input class="input is-info" type="text" id="tags_all_input" placeholder="Tagi poboczne">
+                <input class="input is-info" type="text" id="tags_all_input" placeholder="smutek, zal, zlosc">
             </p>
         </div>
     </div>
@@ -39,40 +39,15 @@
   <div class="tile is-4 is-vertical is-parent">
 
     <div class="tile is-child has-text-centered">
-      <a class="button is-warning" id="tags_all">Odznacz wszystko</a>
+      <a class="button is-warning" id="save_all">Dodaj wszystkie obrazki</a>
     </div>
-    <div class="tile is-child  has-text-centered">
-        <a class="button is-danger" id="delete_all">Usuń wszystkie obrazki</a>
-    </div>
-  </div>
-</div>
-{% else %}
-<div class="tile is-ancestor box">
-  <div class="tile is-vertical is-parent">
-    <div class="tile is-child">
-        <p class="title">Dodaj wszędzie tagi:</p>
-        <div class="field">
-            <p class="control">
-                <input class="input is-info" type="text" id="tags_all_input" placeholder="Tagi poboczne">
-            </p>
-        </div>
-    </div>
-    <div class="tile is-child has-text-centered">
-      <a class="button is-primary" id="tags_all">Dodaj globalne tagi</a>
-    </div>
-  </div>
-  <div class="tile is-4 is-vertical is-parent">
 
-    <div class="tile is-child has-text-centered">
-      <a class="button is-warning" id="tags_all">Odznacz wszystko</a>
-    </div>
     <div class="tile is-child  has-text-centered">
         <a class="button is-danger" id="delete_all">Usuń wszystkie obrazki</a>
     </div>
   </div>
 </div>
 
-{% endif %}
 
 <div class="hide" id="edit_menu_local">
     <div class="columns">

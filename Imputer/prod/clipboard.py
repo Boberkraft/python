@@ -24,8 +24,8 @@ class ClipBoard:
             keyboard.send('backspace')
 
     @classmethod
-    def paste(cls, path):
-        print('sciezka', path)
+    def paste(cls, file, tag):
+        path = os.path.join('uploads/', file)
         image = Image.open(path)
 
         output = BytesIO()
@@ -36,8 +36,8 @@ class ClipBoard:
         cls.send_to_clipboard(win32clipboard.CF_DIB, data)
         pythoncom.CoInitialize()
         shell = win32com.client.Dispatch("WScript.Shell")
+        cls.erase(tag)
         shell.SendKeys('^(v)')
-        cls.erase(os.path.basename(path))
 
 if __name__ == '__main__':
 

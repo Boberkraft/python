@@ -75,6 +75,7 @@ class Database:
     Uploaded = Uploaded
     session = Session()
     text = text
+    func = func
 
 
     @classmethod

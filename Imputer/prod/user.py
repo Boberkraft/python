@@ -1,6 +1,7 @@
 from database import Database
 from singleton import Singleton
 import os
+import random
 
 class User:
 
@@ -38,14 +39,14 @@ class User:
 
     @staticmethod
     def add_uploaded(id, tags):
-        if Database.session.query(Database.Uploaded).filter_by(image_id=id).exist():
+        if Database.session.query(Database.Uploaded).filter_by(image_id=id).first():
             Database.session.query(Database.Uploaded).filter_by(image_id=id).delete()
             img = Database.session.query(Database.Image).filter_by(id=id).first()
         else:
             print('Deleting tags.')
             # this image is already added. Lets change its tags.
             img = Database.session.query(Database.Image).filter_by(id=id).first()
-            img.tags.delete()
+            img.tags = []  # delete
         print(img)
         for tag in tags.split(','):
             tag = tag.strip().lower()
@@ -59,8 +60,19 @@ class User:
                 img.tags.append(database_tag)
         Database.commit()
 
+    @staticmethod
+    def get_by_tag(tag):
+        tag = tag.strip()
+        print('lloooking for', tag, len(tag))
 
+        got = Database.session.query(Database.Image).filter(Database.Image.tags.any(name=tag)).order_by(Database.func.random())
+        try:
 
+            if got:
+
+                return got[0].file
+        except ValueError:
+            pass
 
     @staticmethod
     def get_uploaded():
